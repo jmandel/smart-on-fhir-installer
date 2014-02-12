@@ -28,7 +28,7 @@ sudo apt-get -y install git    \
 cd /tmp
 git clone https://github.com/ansible/ansible.git         
 cd ansible
-git checkout  tags/v1.4.4
+git checkout release1.4.4
 make install
 
 cd /tmp 
