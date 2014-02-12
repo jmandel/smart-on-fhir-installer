@@ -1,0 +1,72 @@
+- name: Add PPA repos
+  apt_repository: repo={{item}}
+  with_items: ['ppa:webupd8team/java','ppa:nginx/stable']
+
+- name: Install nginx
+  apt: pkg=nginx update-cache=yes
+
+- name: nginx config
+  template: src=nginx_default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
+
+- name: fhir upstart config
+  template: src=smart-on-fhir.conf.j2 dest=/etc/init/smart-on-fhir.conf owner=root group=root mode=0644
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: install postgres
+  apt: pkg=python-{{item}}
+  with_items: ["psycopg2"]
+
+- name: install postgres
+  apt: pkg=postgresql-9.1
+
+- name: postgres config
+  copy: src=pg_hba.conf
+        dest=/etc/postgresql/9.1/main/pg_hba.conf
+
+- name: create postgres db
+  sudo_user: postgres
+  postgresql_db: name=fhir owner={{postgres.user}}
+
+- name: create postgres user
+  sudo_user: postgres
+  postgresql_user: 
+          name={{postgres.user}} 
+          password={{postgres.password}}
+          role_attr_flags=SUPERUSER
+
+- name: restart postgres
+  service: name=postgresql state=restarted
+
+- name: checkout smart-on-fhir 
+  git: repo=https://github.com/jmandel/smart-on-fhir.git
+       dest=/opt/smart-on-fhir
+
+- name: Automatically select the Oracle License
+  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
+- name: Install Oracle Java
+  apt: pkg=oracle-java7-installer
+
+- name: set global JAVA_HOME
+  lineinfile: dest=/etc/environment
+              state=present
+              regexp='^JAVA_HOME'
+              line='JAVA_HOME=/usr/lib/jvm/java-7-oracle'
+
+- name: build grails war
+  shell: chdir=/opt/smart-on-fhir
+        ./grailsw dev war
+ 
+- name: install postgres tables
+  shell: chdir=/opt/smart-on-fhir
+          ./grailsw -DnoTomcat=true run-script scripts/CreateDatabase.groovy
+ 
+- name: get jetty-runner
+  get_url: 
+          url=http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.0.M0/jetty-runner-9.1.0.M0.jar
+          dest=/opt/jetty-runner.jar
+
+- name: restart smart-on-fhir
+  service: name=smart-on-fhir state=started

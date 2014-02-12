@@ -1,0 +1,7 @@
+---
+- hosts: smart-on-fhir-servers
+  sudo: yes
+  vars_files:
+    - settings.yml 
+  roles:
+    - common

@@ -1,0 +1,3 @@
+---
+# file: site.yml
+- include: smart-on-fhir-servers.yml

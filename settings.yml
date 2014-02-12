@@ -1,0 +1,7 @@
+---
+postgres:
+  user: "fhir"
+  password: "fhir"
+fhir_server: 
+  base_url: "http://localhost:9080"
+  use_auth: false
