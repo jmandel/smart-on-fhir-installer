@@ -14,7 +14,7 @@
 - name: restart nginx
   service: name=nginx state=restarted
 
-- name: install postgres
+- name: install python modules
   apt: pkg=python-{{item}}
   with_items: ["psycopg2"]
 
