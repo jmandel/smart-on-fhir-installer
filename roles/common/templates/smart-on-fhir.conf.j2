@@ -14,5 +14,5 @@ env INTROSPECTION_URI={{fhir_server.introspection_url|default('')}}
 
 script
     chdir /opt/smart-on-fhir/target
-    java -jar /opt/jetty-runner.jar --port 3000 fhir-0.1.war
+    java -jar /opt/jetty-runner.jar --host localhost --port 3000 --out /opt/smart-on-fhir/smart-on-fhir.log fhir-0.1.war
 end script
