@@ -1,4 +1,38 @@
-# Config Management: SMART on FHIR
+## Get started with one line, using Vagrant
+
+The two prerequisites, which are available on Mac, Windows, and Linux are:
+
+1. [Virtualbox](https://www.virtualbox.org/wiki/Downloads)
+2. [Vagrant](http://www.vagrantup.com/downloads)
+
+Once you have Virtualbox and Vagrant installed on your machine, you can:
+
+```
+vagrant plugin install vagrant-vbguest
+git clone https://github.com/jmandel/smart-on-fhir-installer/
+cd smart-on-fhir-installer/vagrant
+vagrant up
+```
+
+... wait ~10min while everything installs (depending on your Internet connection speed).
+
+Now visit `http://localhost:9080` in a web browser on your local ("host")
+maachine and you should have a working FHIR server.
+
+You can poke around by doing:
+
+```
+vagrant ssh
+```
+
+And when you're done you can shut it down with:
+
+```
+vagrant halt
+```
+
+
+# Complete Config Management: SMART on FHIR
 
 Use these scripts to get up and runing with:
  * [SMART on FHIR](https://github.com/jmandel/smart-on-fhir) 
@@ -72,36 +106,3 @@ To install against a remote host, you'll:
  * modify the `hosts` file to point to a remote machine
  * Run `ansible-playbook  -i hosts -v site.yml`
 
-
-## Get started with one line, using Vagrant
-
-The two prerequisites, which are available on Mac, Windows, and Linux are:
-
-1. [Virtualbox](https://www.virtualbox.org/wiki/Downloads)
-2. [Vagrant](http://www.vagrantup.com/downloads)
-
-Once you have Virtualbox and Vagrant installed on your machine, you can:
-
-```
-vagrant plugin install vagrant-vbguest
-git clone https://github.com/jmandel/smart-on-fhir-installer/
-cd smart-on-fhir-installer/vagrant
-vagrant up
-```
-
-... wait ~10min while everything installs (depending on your Internet connection speed).
-
-Now visit `http://localhost:9080` in a web browser on your local ("host")
-maachine and you should have a working FHIR server.
-
-You can poke around by doing:
-
-```
-vagrant ssh
-```
-
-And when you're done you can shut it down with:
-
-```
-vagrant halt
-```
