@@ -2,6 +2,15 @@
   apt_repository: repo={{item}}
   with_items: ['ppa:webupd8team/java','ppa:nginx/stable']
 
+- name: Update apt Cache 
+  apt: update_cache=yes
+  
+- name: Upgrade the Server
+  apt: upgrade=full
+  
+- name: Install GIT
+  apt: pkg=git
+  
 - name: Install nginx
   apt: pkg=nginx update-cache=yes
 

@@ -19,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   config.vm.provision "ansible" do |ansible|
     # ansible.verbose = "v"
-    ansible.playbook = "provisioning/site.yml"
+    ansible.playbook = "provisioning/smart-on-fhir-servers.yml"
   end
 
 end

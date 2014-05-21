@@ -1,5 +1,5 @@
 ---
-- hosts: smart-on-fhir-servers
+- hosts: all
   sudo: yes
   vars_files:
     - settings.yml 
