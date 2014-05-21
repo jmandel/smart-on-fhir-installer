@@ -11,10 +11,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", "1024"]
   end  
-  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # accessing "localhost:9080" will access port 80 on the guest machine.
   config.vm.network :forwarded_port, guest: 80, host: 9080
   #config.vm.network :private_network, ip: "172.31.1.2"
-  config.vm.hostname = "smart-ccda"
+  config.vm.hostname = "smart-on-fhir"
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is

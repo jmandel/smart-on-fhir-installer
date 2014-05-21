@@ -17,7 +17,7 @@ vagrant up
 ... wait ~10min while everything installs (depending on your Internet connection speed).
 
 Now visit `http://localhost:9080` in a web browser on your local ("host")
-maachine and you should have a working FHIR server.
+machine and you should have a working FHIR server.
 
 You can poke around by doing:
 
