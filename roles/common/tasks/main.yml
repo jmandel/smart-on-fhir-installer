@@ -19,11 +19,11 @@
   with_items: ["psycopg2"]
 
 - name: install postgres
-  apt: pkg=postgresql-9.1
+  apt: pkg=postgresql
 
 - name: postgres config
   copy: src=pg_hba.conf
-        dest=/etc/postgresql/9.1/main/pg_hba.conf
+        dest=/etc/postgresql/9.3/main/pg_hba.conf
 
 - name: create postgres user
   sudo_user: postgres
@@ -56,6 +56,7 @@
               line='JAVA_HOME=/usr/lib/jvm/java-7-oracle'
 
 - name: build grails war
+  sudo_user: root
   shell: chdir=/opt/smart-on-fhir
         ./grailsw dev war
  
