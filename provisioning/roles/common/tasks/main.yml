@@ -8,11 +8,30 @@
 - name: Upgrade the Server
   apt: upgrade=full
   
-- name: Install GIT
-  apt: pkg=git
+- name: Automatically select the OpenLDAP Configuration settings
+  shell: echo "slapd {{item}}" | sudo debconf-set-selections
+  with_items:
+         - slapd/password1 password {{ldap_server.admin_password}}
+         - slapd/password2 password {{ldap_server.admin_password}}
+         - slapd/allow_ldap_v2 boolean false
+         - shared/organization string {{ldap_server.organization}}
+         - slapd/no_configuration boolean false
+         - slapd/move_old_database boolean true
+         - slapd/purge_database boolean true
+         - slapd/domain string {{ldap_server.domain}}
+         - slapd/backend boolean HDB
   
-- name: Install nginx
-  apt: pkg=nginx update-cache=yes
+- name: Install APT Packages (git, nginx, slapd, ldap-utils, postgresql, python-psycopg2)
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  apt: pkg={{item}}
+  with_items:
+         - git
+         - nginx
+         - slapd
+         - ldap-utils
+         - postgresql
+         - python-psycopg2
 
 - name: nginx config
   template: src=nginx_default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
@@ -22,13 +41,6 @@
 
 - name: restart nginx
   service: name=nginx state=restarted
-
-- name: install python modules
-  apt: pkg=python-{{item}}
-  with_items: ["psycopg2"]
-
-- name: install postgres
-  apt: pkg=postgresql
 
 - name: postgres config
   copy: src=pg_hba.conf
@@ -65,13 +77,16 @@
               line='JAVA_HOME=/usr/lib/jvm/java-7-oracle'
 
 - name: build grails war
-  sudo_user: root
+  environment:
+    JAVA_HOME: /usr/lib/jvm/java-7-oracle
   shell: chdir=/opt/smart-on-fhir
         ./grailsw dev war
  
 - name: install postgres tables
+  environment:
+    JAVA_HOME: /usr/lib/jvm/java-7-oracle
   shell: chdir=/opt/smart-on-fhir
-          ./grailsw -DnoTomcat=true run-script scripts/CreateDatabase.groovy
+        ./grailsw -DnoTomcat=true run-script scripts/CreateDatabase.groovy
  
 - name: get jetty-runner
   get_url: 

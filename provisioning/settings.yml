@@ -5,3 +5,7 @@ postgres:
 fhir_server: 
   base_url: "http://localhost:9080"
   use_auth: false
+ldap_server:
+  domain: "smartplatforms.org"
+  organization: "SMART Platforms"
+  admin_password: "4p923epslKq3"
