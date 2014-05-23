@@ -13,10 +13,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", "2048"]
   end
-  
-  # accessing "localhost:9080" will access port 80 on the guest machine.
-  config.vm.network :forwarded_port, guest: 80, host: 9080
-  config.vm.network :forwarded_port, guest: 8080, host: 9085
+
+  config.vm.network :forwarded_port, guest: 9080, host: 9080
+  config.vm.network :forwarded_port, guest: 9085, host: 9085
   config.vm.network :forwarded_port, guest: 389, host: 389
   
   config.vm.provision "ansible" do |ansible|
