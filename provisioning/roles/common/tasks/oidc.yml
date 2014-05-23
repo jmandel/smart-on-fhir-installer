@@ -1,0 +1,49 @@
+- name: download jetty-runner
+  get_url: 
+          url={{jetty.download_url}}
+          dest={{install_dir}}/jetty-runner.jar
+
+- name: checkout OpenID Connect server
+  tags: [oidc]
+  git: repo={{auth_server.repo}}
+       version={{auth_server.branch}}
+       dest={{install_dir}}/ldap-openid-connect-server
+
+- name: build OpenID Connect server
+  tags: [oidc]
+  environment:
+    JAVA_HOME: "{{java_home_dir}}"
+  shell: chdir={{install_dir}}/ldap-openid-connect-server
+       mvn package -DskipTests=true -Dmaven.javadoc.skip=true
+
+- name: configure OpenID Connect server service
+  tags: [oidc]
+  template: src=oidc.conf.j2
+            dest=/etc/init/oidc.conf
+            owner=root group=root mode=0644
+
+- name: restart OpenID Connect server
+  tags: [oidc]
+  service: name=oidc state=restarted
+
+
+         
+- name: configure LDAP client tool
+  template: src="ldap.conf"
+            dest="/etc/ldap/ldap.conf"
+            owner=root group=root mode=0644
+
+- name: wait for auth server to become available
+  wait_for: port=4000 delay=10
+            
+- name: generate sample LDAP directory
+  template: src="ldap_content.ldif"
+            dest="{{install_dir}}/ldap_content.ldif"
+
+- name: load sample LDAP directory
+  shell: chdir={{install_dir}}
+         ldapadd
+           -x -D cn=admin,{{ldap_server.base}}
+           -w {{ldap_server.admin_password}}
+           -f ldap_content.ldif
+
