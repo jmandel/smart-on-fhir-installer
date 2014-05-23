@@ -1,11 +1,31 @@
 ---
+system:
+  install_dir: "/opt"
+  java_home_dir: "/usr/lib/jvm/java-7-oracle"
+jetty:
+  download_url: "http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.0.M0/jetty-runner-9.1.0.M0.jar"
 postgres:
   user: "fhir"
   password: "fhir"
 fhir_server: 
   base_url: "http://localhost:9080"
   use_auth: false
+  introspection_uri: "http://localhost:9181/introspect?token={token}"
+  register_uri: "http://localhost:9181/register"
+  authorize_uri: "http://localhost:9181/authorize"
+  token_uri: "http://localhost:9181/token"
+  repo: "https://github.com/nschwertner/smart-on-fhir.git"
+  branch: "master"
 ldap_server:
-  domain: "smartplatforms.org"
+  domain: "localhost"
+  base: "dc=localhost"
+  uri: "ldap://localhost:389"
   organization: "SMART Platforms"
   admin_password: "4p923epslKq3"
+auth_server:
+  base_url: "http://localhost:9181"
+  repo: "https://github.com/nschwertner/ldap-openid-connect-server.git"
+  branch: "master"
+sample_patients:
+  repo: "https://github.com/chb/smart_sample_patients.git"
+  branch: "fhir"

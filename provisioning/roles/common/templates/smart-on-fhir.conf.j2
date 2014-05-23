@@ -10,9 +10,13 @@ respawn limit 10 5
 
 env BASE_URL={{fhir_server.base_url}}
 env AUTH={{fhir_server.use_auth|default('false')}}
-env INTROSPECTION_URI={{fhir_server.introspection_url|default('')}}
+env INTROSPECTION_URI={{fhir_server.introspection_uri|default('')}}
+env REGISTER_URI={{fhir_server.register_uri|default('')}}
+env AUTHORIZE_URI={{fhir_server.authorize_uri|default('')}}
+env TOKEN_URI={{fhir_server.token_uri|default('')}}
+env JAVA_HOME=/usr/lib/jvm/java-7-oracle/
 
 script
-    chdir /opt/smart-on-fhir/target
-    java -jar /opt/jetty-runner.jar --host localhost --port 3000 --out /opt/smart-on-fhir/smart-on-fhir.log fhir-0.1.war
+    chdir {{system.install_dir}}/smart-on-fhir/target
+    java -jar {{system.install_dir}}/jetty-runner.jar --host localhost --port 3000 --out {{system.install_dir}}/smart-on-fhir.log fhir-0.1.war
 end script

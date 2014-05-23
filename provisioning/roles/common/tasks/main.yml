@@ -1,14 +1,14 @@
-- name: Add PPA repos
+- name: add PPA repos
   apt_repository: repo={{item}}
   with_items: ['ppa:webupd8team/java','ppa:nginx/stable']
 
-- name: Update apt Cache 
+- name: update apt cache 
   apt: update_cache=yes
   
-- name: Upgrade the Server
+- name: upgrade server packages
   apt: upgrade=full
   
-- name: Automatically select the OpenLDAP Configuration settings
+- name: automatically select the OpenLDAP configuration settings
   shell: echo "slapd {{item}}" | sudo debconf-set-selections
   with_items:
          - slapd/password1 password {{ldap_server.admin_password}}
@@ -21,30 +21,36 @@
          - slapd/domain string {{ldap_server.domain}}
          - slapd/backend boolean HDB
   
-- name: Install APT Packages (git, nginx, slapd, ldap-utils, postgresql, python-psycopg2)
+- name: install APT packages
   environment:
     DEBIAN_FRONTEND: noninteractive
-  apt: pkg={{item}}
+  apt: pkg={{item}} force=yes
   with_items:
          - git
          - nginx
          - slapd
          - ldap-utils
+         - maven
          - postgresql
          - python-psycopg2
+         - python-jinja2
+         
+- name: configure LDAP client tool
+  template: src="ldap.conf"
+            dest="/etc/ldap/ldap.conf"
+            owner=root group=root mode=0644
+            
+- name: generate sample LDAP directory
+  template: src="ldap_content.ldif"
+            dest="{{system.install_dir}}/ldap_content.ldif"
+  notify:
+        - load sample LDAP directory
 
-- name: nginx config
-  template: src=nginx_default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
-
-- name: fhir upstart config
-  template: src=smart-on-fhir.conf.j2 dest=/etc/init/smart-on-fhir.conf owner=root group=root mode=0644
-
-- name: restart nginx
-  service: name=nginx state=restarted
-
-- name: postgres config
+- name: configure postgres
   copy: src=pg_hba.conf
         dest=/etc/postgresql/9.3/main/pg_hba.conf
+  notify:
+        - restart postgres
 
 - name: create postgres user
   sudo_user: postgres
@@ -57,41 +63,94 @@
   sudo_user: postgres
   postgresql_db: name=fhir owner={{postgres.user}}
 
-- name: restart postgres
-  service: name=postgresql state=restarted
-
-- name: checkout smart-on-fhir 
-  git: repo=https://github.com/jmandel/smart-on-fhir.git
-       dest=/opt/smart-on-fhir
-
-- name: Automatically select the Oracle License
+- name: automatically select the Oracle License
   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 
-- name: Install Oracle Java
+- name: install Oracle Java
   apt: pkg=oracle-java7-installer
 
 - name: set global JAVA_HOME
   lineinfile: dest=/etc/environment
               state=present
               regexp='^JAVA_HOME'
-              line='JAVA_HOME=/usr/lib/jvm/java-7-oracle'
+              line='JAVA_HOME={{system.java_home_dir}}'
 
-- name: build grails war
+- name: configure smart-on-fhir service
+  template: src=smart-on-fhir.conf.j2
+            dest=/etc/init/smart-on-fhir.conf
+            owner=root group=root mode=0644
+  notify:
+        - restart smart-on-fhir
+
+- name: stop smart-on-fhir
+  service: name=smart-on-fhir state=stopped
+  notify:
+        - restart smart-on-fhir
+        
+- name: checkout smart-on-fhir
+  git: repo={{fhir_server.repo}}
+       version={{fhir_server.branch}}
+       dest={{system.install_dir}}/smart-on-fhir
+       
+- name: build smart-on-fhir server
   environment:
-    JAVA_HOME: /usr/lib/jvm/java-7-oracle
-  shell: chdir=/opt/smart-on-fhir
+    JAVA_HOME: "{{system.java_home_dir}}"
+  shell: chdir={{system.install_dir}}/smart-on-fhir
         ./grailsw dev war
- 
-- name: install postgres tables
-  environment:
-    JAVA_HOME: /usr/lib/jvm/java-7-oracle
-  shell: chdir=/opt/smart-on-fhir
-        ./grailsw -DnoTomcat=true run-script scripts/CreateDatabase.groovy
- 
-- name: get jetty-runner
-  get_url: 
-          url=http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.4.v20140401/jetty-runner-9.1.4.v20140401.jar
-          dest=/opt/jetty-runner.jar
+  notify:
+        - restart smart-on-fhir
 
-- name: restart smart-on-fhir
-  service: name=smart-on-fhir state=started
+- name: install smart-on-fhir tables
+  environment:
+    JAVA_HOME: "{{system.java_home_dir}}"
+  shell: chdir={{system.install_dir}}/smart-on-fhir
+        ./grailsw -DnoTomcat=true run-script scripts/CreateDatabase.groovy
+
+- name: configure OpenID Connect server service
+  template: src=oidc.conf.j2
+            dest=/etc/init/oidc.conf
+            owner=root group=root mode=0644
+  notify:
+        - restart OpenID Connect server
+
+- name: stop OpenID Connect server
+  service: name=oidc state=stopped
+  notify:
+        - restart OpenID Connect server
+   
+- name: checkout OpenID Connect server
+  git: repo={{auth_server.repo}}
+       version={{auth_server.branch}}
+       dest={{system.install_dir}}/ldap-openid-connect-server
+       
+- name: build OpenID Connect server
+  environment:
+    JAVA_HOME: "{{system.java_home_dir}}"
+  shell: chdir={{system.install_dir}}/ldap-openid-connect-server
+       mvn package
+  notify:
+        - restart OpenID Connect server
+
+- name: download jetty-runner
+  get_url: 
+          url={{jetty.download_url}}
+          dest={{system.install_dir}}/jetty-runner.jar
+  notify:
+        - restart smart-on-fhir
+        - restart OpenID Connect server
+        
+- name: checkout sample patients
+  git: repo={{sample_patients.repo}}
+       version={{sample_patients.branch}}
+       recursive=yes
+       dest={{system.install_dir}}/smart_sample_patients
+  notify:
+        - build sample patients
+        - wait for smart-on-fhir server to become available
+        - load sample patients
+        
+- name: nginx config
+  template: src=nginx_default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
+  template: src=nginx_oidc.j2 dest=/etc/nginx/sites-enabled/oidc owner=root group=root mode=0644
+  notify:
+        - restart nginx
