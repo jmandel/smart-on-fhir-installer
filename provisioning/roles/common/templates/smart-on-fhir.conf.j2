@@ -14,9 +14,11 @@ env INTROSPECTION_URI={{fhir_server.introspection_uri|default('')}}
 env REGISTER_URI={{fhir_server.register_uri|default('')}}
 env AUTHORIZE_URI={{fhir_server.authorize_uri|default('')}}
 env TOKEN_URI={{fhir_server.token_uri|default('')}}
-env JAVA_HOME=/usr/lib/jvm/java-7-oracle/
+env JAVA_HOME={{java_home_dir}}
 
 script
-    chdir {{system.install_dir}}/smart-on-fhir/target
-    java -jar {{system.install_dir}}/jetty-runner.jar --host localhost --port 3000 --out {{system.install_dir}}/smart-on-fhir.log fhir-0.1.war
+    chdir {{install_dir}}/smart-on-fhir/target
+    java \
+       -jar {{install_dir}}/jetty-runner.jar --host localhost --port 3000 \
+       fhir-0.1.war
 end script
