@@ -15,12 +15,12 @@ cd smart-on-fhir-installer
 vagrant up
 ```
 
-... wait ~10min while everything installs (depending on your Internet connection speed).
+... wait ~20min while everything installs (depending on your Internet connection speed).
 
 Now visit `http://localhost:9080` in a web browser on your local ("host")
 machine and you should have a working FHIR server. 
 
-The OpenID Connect authentication server should be at `http://localhost:9181`.
+The OpenID Connect authentication server should be at `http://localhost:9085`.
 
 You can poke around by doing:
 
