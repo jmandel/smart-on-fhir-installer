@@ -16,7 +16,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :forwarded_port, guest: 9080, host: 9080
   config.vm.network :forwarded_port, guest: 9085, host: 9085
-  config.vm.network :forwarded_port, guest: 389, host: 389
   
   config.vm.provision "ansible" do |ansible|
     # ansible.verbose = "v"
