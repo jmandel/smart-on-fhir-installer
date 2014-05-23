@@ -1,6 +1,7 @@
 ## Get started with one line, using Vagrant
 
-The three prerequisites, which are available on Mac, Windows, and Linux are (we have tested with the versions below, but other versions may be fine too):
+The three prerequisites, which are available on Mac, Windows, and Linux 
+are (we have tested with the versions below, but other versions may be fine too):
 
 1. [VirtualBox 4.3.12](https://www.virtualbox.org/wiki/Downloads)
 2. [Vagrant 1.6.2](http://www.vagrantup.com/downloads)
@@ -20,7 +21,9 @@ vagrant up
 Now visit `http://localhost:9080` in a web browser on your local ("host")
 machine and you should have a working FHIR server. 
 
-The OpenID Connect authentication server should be at `http://localhost:9085`.
+The OpenID Connect authentication server should be at `http://localhost:9085`. It uses
+the OpenLDAP server running on the virtual machine. The two sample accounts are `demo/demo` and
+`admin/password` by default.
 
 You can poke around by doing:
 
