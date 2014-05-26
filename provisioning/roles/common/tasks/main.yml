@@ -7,81 +7,6 @@
   
 - name: upgrade server packages
   apt: upgrade=full
-  
-- name: automatically select the OpenLDAP configuration settings
-  shell: echo "slapd {{item}}" | sudo debconf-set-selections
-  with_items:
-         - slapd/password1 password {{ldap_server.admin_password}}
-         - slapd/password2 password {{ldap_server.admin_password}}
-         - slapd/allow_ldap_v2 boolean false
-         - shared/organization string {{ldap_server.organization}}
-         - slapd/no_configuration boolean false
-         - slapd/move_old_database boolean true
-         - slapd/purge_database boolean true
-         - slapd/domain string {{ldap_server.domain}}
-         - slapd/backend boolean HDB
-  
-- name: install apt packages
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-  apt: pkg={{item}} force=yes
-  with_items:
-         - git
-         - nginx
-         - slapd
-         - ldap-utils
-         - maven
-         - postgresql
-         - python-psycopg2
-         - python-jinja2
-         
-- name: configure smart-on-fhir service
-  template: src=smart-on-fhir.conf.j2
-            dest=/etc/init/smart-on-fhir.conf
-            owner=root group=root mode=0644
-  notify:
-        - restart smart-on-fhir
-
-- name: stop smart-on-fhir
-  service: name=smart-on-fhir state=stopped
-  notify:
-        - restart smart-on-fhir
-         
-- name: configure OpenID Connect server service
-  template: src=oidc.conf.j2
-            dest=/etc/init/oidc.conf
-            owner=root group=root mode=0644
-  notify:
-        - restart OpenID Connect server
-
-- name: stop OpenID Connect server
-  service: name=oidc state=stopped
-  notify:
-        - restart OpenID Connect server
-         
-- name: configure LDAP client tool
-  template: src="ldap.conf"
-            dest="/etc/ldap/ldap.conf"
-            owner=root group=root mode=0644
-            
-- name: generate sample LDAP directory
-  template: src="ldap_content.ldif"
-            dest="{{install_dir}}/ldap_content.ldif"
-  notify:
-        - load sample LDAP directory
-
-- name: configure postgres
-  copy: src=pg_hba.conf
-        dest=/etc/postgresql/9.3/main/pg_hba.conf
-  notify:
-        - restart postgres
-
-- name: create postgres user
-  sudo_user: postgres
-  postgresql_user: 
-          name={{postgres.user}} 
-          password={{postgres.password}}
-          role_attr_flags=SUPERUSER
 
 - name: automatically select the Oracle License
   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
@@ -94,46 +19,17 @@
               state=present
               regexp='^JAVA_HOME'
               line='JAVA_HOME={{java_home_dir}}'
-        
-- name: checkout smart-on-fhir
-  git: repo={{fhir_server.repo}}
-       version={{fhir_server.branch}}
-       dest={{install_dir}}/smart-on-fhir
+ 
+- include: ldap.yml
+- include: smart-on-fhir.yml
+- include: oidc.yml
+  
+- name: configure nginx (fhir-starter apps)
+  tags: [apps]
+  template: src=nginx_apps.j2 dest=/etc/nginx/sites-enabled/apps owner=root group=root mode=0644
   notify:
-        - build smart-on-fhir server
-        - drop postgres db
-        - create postgres db
-        - install smart-on-fhir tables
-        - restart smart-on-fhir
-        - wait for smart-on-fhir server to become available
-        - load sample patients
+        - restart nginx
    
-- name: checkout OpenID Connect server
-  git: repo={{auth_server.repo}}
-       version={{auth_server.branch}}
-       dest={{install_dir}}/ldap-openid-connect-server
-  notify:
-        - build OpenID Connect server
-        - restart OpenID Connect server
-
-- name: download jetty-runner
-  get_url: 
-          url={{jetty.download_url}}
-          dest={{install_dir}}/jetty-runner.jar
-  notify:
-        - restart smart-on-fhir
-        - restart OpenID Connect server
-        
-- name: checkout sample patients
-  git: repo={{sample_patients.repo}}
-       version={{sample_patients.branch}}
-       recursive=yes
-       dest={{install_dir}}/smart_sample_patients
-  notify:
-        - build sample patients
-        - wait for smart-on-fhir server to become available
-        - load sample patients
-        
 - name: configure nginx (smart-on-fhir server)
   template: src=nginx_default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
   notify:

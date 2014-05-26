@@ -11,10 +11,11 @@ respawn limit 10 5
 script
     chdir {{install_dir}}
     java \
-       -DBASE_URL="{{auth_server.base_url}}" \
+       -DBASE_URL="{{auth_server.public.pretty}}" \
+       -DCONTEXT_FHIR_ENDPOINT="{{fhir_server.public.pretty}}"\
        -Dldap.server="{{ldap_server.uri}}" \
        -Dldap.url="{{ldap_server.uri}}" \
        -Dldap.base="ou=People,{{ldap_server.base}}" \
        -jar jetty-runner.jar --host localhost --port 4000 \
-       ldap-openid-connect-server/ldap-server-overlay/target/ldap-openid-connect-server.war
+       {{auth_server.war}}
 end script
