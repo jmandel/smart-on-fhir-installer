@@ -11,8 +11,8 @@ respawn limit 10 5
 script
     chdir {{install_dir}}
     java \
-       -DBASE_URL="{{auth_server.public.pretty}}" \
-       -DCONTEXT_FHIR_ENDPOINT="{{fhir_server.public.pretty}}"\
+       -DBASE_URL="{{auth_server.public.base}}" \
+       -DCONTEXT_FHIR_ENDPOINT="{{fhir_server.public.base}}"\
        -Dldap.server="{{ldap_server.uri}}" \
        -Dldap.url="{{ldap_server.uri}}" \
        -Dldap.base="ou=People,{{ldap_server.base}}" \

@@ -25,19 +25,11 @@
   tags: [oidc]
   wait_for: port=4000 delay=10
           
-- name: configure LDAP client tool
-  template: src="ldap.conf"
-            dest="/etc/ldap/ldap.conf"
-            owner=root group=root mode=0644
-           
-- name: generate sample LDAP directory
-  template: src="ldap_content.ldif"
-            dest="{{install_dir}}/ldap_content.ldif"
+- name: configure nginx (OpenID Connect server)
+  tags: [oidc]
+  template: src=nginx_oidc.j2 dest=/etc/nginx/sites-enabled/oidc owner=root group=root mode=0644
+  notify:
+        - restart nginx
+  meta: flush_handlers
 
-- name: load sample LDAP directory
-  shell: chdir={{install_dir}}
-         ldapadd
-           -x -D cn=admin,{{ldap_server.base}}
-           -w {{ldap_server.admin_password}}
-           -f ldap_content.ldif
 
