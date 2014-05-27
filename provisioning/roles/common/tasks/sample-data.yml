@@ -1,0 +1,48 @@
+- name: checkout sample patients
+  git: repo={{sample_patients.repo}}
+       version={{sample_patients.branch}}
+       dest={{install_dir}}/smart_sample_patients
+
+- name: build sample patients
+  shell: chdir={{install_dir}}/smart_sample_patients/bin
+         python generate.py --write-fhir ../generated-data
+
+- name: list 10 sample patients
+  tags: [pts]
+  shell: ls {{install_dir}}/smart_sample_patients/generated-data/*.xml | head -n 10
+  register: sample_patient_files
+
+- name: load sample patients
+  tags: [pts]
+  shell: "chdir={{install_dir}}/smart_sample_patients/generated-data/
+         curl
+           -u {{fhir_server.admin.username}}:{{fhir_server.admin.password}}
+           'http://localhost:3000/?'
+           -H 'Content-Type: text/xml' 
+           --data-binary @{{item}}"
+  with_items: sample_patient_files.stdout_lines
+
+- name: checkout fhir-starter apps
+  tags: [apps,load_apps]
+  git: repo={{app_server.repo}}
+       version={{app_server.branch}}
+       dest={{install_dir}}/fhir-starter
+
+
+- name: list sample apps
+  tags: [apps, load_apps]
+  shell: cat {{install_dir}}/fhir-starter/static/fhirStarter/apps.json
+  register: sample_apps
+
+- name: load sample apps
+  tags: [apps, load_apps]
+  uri: 
+     url='{{auth_server.public.base}}/api/clients'
+     method=POST
+     user={{auth_server.admin.username}}
+     password={{auth_server.admin.password}}
+     HEADER_Content-Type="application/json"
+     status_code=200
+     force_basic_auth=yes
+     body='{{ lookup('template', '../templates/load_app.j2') }}'
+  with_items:  "{{ sample_apps.stdout | to_json }}"

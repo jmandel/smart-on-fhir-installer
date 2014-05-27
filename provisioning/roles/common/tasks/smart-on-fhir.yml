@@ -5,8 +5,6 @@
   with_items:
          - git
          - nginx
-         - slapd
-         - ldap-utils
          - maven
          - postgresql
          - python-psycopg2
@@ -67,4 +65,5 @@
   template: src=nginx_default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
   notify:
         - restart nginx
-  meta: flush_handlers
+
+- meta: flush_handlers

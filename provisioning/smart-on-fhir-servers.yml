@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  sudo: no
+  sudo: yes
   vars_files:
     - settings.yml 
   roles:
