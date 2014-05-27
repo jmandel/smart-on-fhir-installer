@@ -4,7 +4,11 @@ upstream oidc {
 
 # the nginx server instance
 server {
-    listen 9085;
+    {% if auth_server.public.host %}
+    server_name {{auth_server.public.host}};
+    {% endif %}
+
+    listen {{auth_server.public.port}};
     location / {
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

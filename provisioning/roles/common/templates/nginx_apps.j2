@@ -1,5 +1,9 @@
 server {
     listen {{app_server.public.port}};
+    {% if app_server.public.host %}
+    server_name {{app_server.public.host}};
+    {% endif %}
+
     location / {
        root {{install_dir}}/fhir-starter/static;
     }
