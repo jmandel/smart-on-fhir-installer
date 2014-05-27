@@ -21,16 +21,15 @@
   tags: [oidc]
   service: name=oidc state=restarted
 
-
-         
+- name: wait for auth server to become available
+  tags: [oidc]
+  wait_for: port=4000 delay=10
+          
 - name: configure LDAP client tool
   template: src="ldap.conf"
             dest="/etc/ldap/ldap.conf"
             owner=root group=root mode=0644
-
-- name: wait for auth server to become available
-  wait_for: port=4000 delay=10
-            
+           
 - name: generate sample LDAP directory
   template: src="ldap_content.ldif"
             dest="{{install_dir}}/ldap_content.ldif"
