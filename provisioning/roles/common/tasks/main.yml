@@ -45,14 +45,14 @@
   tags: [apps]
   uri: 
      url='http://localhost:4000/api/clients'
-     method=POST user=client password=secret
+     method=POST
+     user={{auth_server.admin.username}}
+     password={{auth_server.admin.password}}
      HEADER_Content-Type="application/json"
      status_code=200
      force_basic_auth=yes
      body='{{ lookup('template', '../templates/load_app.j2') }}'
   with_items:  "{{ sample_apps.stdout | to_json }}"
-
-
  
 - name: configure nginx (fhir-starter apps)
   tags: [apps]
