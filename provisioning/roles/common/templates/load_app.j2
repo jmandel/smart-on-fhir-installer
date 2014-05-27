@@ -2,8 +2,8 @@
   "clientId": "{{item.client_id}}",
   "clientName": "{{item.client_name}}",
   "logoUri": "{{item.logo_uri}}",
-  "initiateLoginUri":"{{app_server.public.pretty}}{{item.launch_uri|default("null")}}",
-  "redirectUri": ["{{app_server.public.pretty}}{{item.redirect_uri}}"],
+  "initiateLoginUri":"{{app_server.public.pretty}}/{{item.launch_uri|default("null")}}",
+  "redirectUris": ["{{app_server.public.pretty}}/{{item.redirect_uri}}"],
   "scope": [
     "launch",
     "user/*.*",
@@ -14,5 +14,6 @@
     "email"
   ],
   "clientDescription": null,
-  "grantTypes": ["implicit"]
+  "grantTypes": ["implicit"],
+  "accessTokenValiditySeconds": 3600
 } 
