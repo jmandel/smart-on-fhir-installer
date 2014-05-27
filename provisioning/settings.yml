@@ -12,16 +12,16 @@ auth_server:
     password: secret
   public:
     port: 9085
-    host: "107.170.197.65"
-    pretty: "http://107.170.197.65:9085"
+    host: "localhost"
+    pretty: "http://localhost:9085"
   repo: "https://github.com/jmandel/OpenID-Connect-Java-Spring-Server.git"
   branch: "smart-launch"
   war: ldap-openid-connect-server/openid-connect-server-webapp/target/openid-connect-server-webapp.war
 fhir_server: 
   public:
     port: 9080
-    host: "107.170.197.65"
-    pretty: "http://107.170.197.65:9080"
+    host: "localhost"
+    pretty: "http://localhost:9080"
   admin:
     username: client
     password: secret
@@ -35,8 +35,8 @@ fhir_server:
 app_server: 
   public:
     port: 9090
-    host: "107.170.197.65"
-    pretty: "http://107.170.197.65:9090"
+    host: "localhost"
+    pretty: "http://localhost:9090"
   repo: "https://github.com/jmandel/fhir-starter.git"
   branch: "smart-launch"
 
