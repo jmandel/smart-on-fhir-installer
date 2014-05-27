@@ -7,6 +7,18 @@
   
 - name: upgrade server packages
   apt: upgrade=full
+  
+- name: install apt packages
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  apt: pkg={{item}} force=yes
+  with_items:
+         - git
+         - nginx
+         - maven
+         - postgresql
+         - python-psycopg2
+         - python-jinja2
 
 - name: automatically select the Oracle License
   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
@@ -28,8 +40,5 @@
  
 - include: ldap.yml
 - include: smart-on-fhir.yml
-- include: oidc.yml
+- include: auth-server.yml
 - include: sample-data.yml
-
-
-

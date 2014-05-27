@@ -1,36 +1,38 @@
-- name: checkout OpenID Connect server
-  tags: [oidc]
+- name: checkout auth server
+  tags: [auth]
   git: repo={{auth_server.repo}}
        version={{auth_server.branch}}
        dest={{install_dir}}/ldap-openid-connect-server
+#  register: oidc_checkout
 
-- name: build OpenID Connect server
-  tags: [oidc]
+- name: build auth server
+  tags: [auth]
+#  when: oidc_checkout
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/ldap-openid-connect-server
        mvn package -DskipTests=true -Dmaven.javadoc.skip=true
 
-- name: configure OpenID Connect server service
-  tags: [oidc]
+- name: configure auth server service
+  tags: [auth]
   template: src=oidc.conf.j2
             dest=/etc/init/oidc.conf
             owner=root group=root mode=0644
+#  register: oidc_reconfigured
 
-- name: restart OpenID Connect server
-  tags: [oidc]
+- name: restart auth server
+  tags: [auth]
+#  when: oidc_checkout | oidc_reconfigured
   service: name=oidc state=restarted
 
 - name: wait for auth server to become available
-  tags: [oidc]
+  tags: [auth]
   wait_for: port=4000 delay=10
           
-- name: configure nginx (OpenID Connect server)
-  tags: [oidc]
+- name: configure nginx (auth server)
+  tags: [auth]
   template: src=nginx_oidc.j2 dest=/etc/nginx/sites-enabled/oidc owner=root group=root mode=0644
   notify:
         - restart nginx
 
 - meta: flush_handlers
-
-

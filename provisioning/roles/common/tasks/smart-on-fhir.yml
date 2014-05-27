@@ -1,15 +1,3 @@
-- name: install apt packages
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-  apt: pkg={{item}} force=yes
-  with_items:
-         - git
-         - nginx
-         - maven
-         - postgresql
-         - python-psycopg2
-         - python-jinja2
-         
 - name: configure postgres
   copy: src=pg_hba.conf
         dest=/etc/postgresql/9.3/main/pg_hba.conf
