@@ -12,13 +12,6 @@
          - python-psycopg2
          - python-jinja2
          
-- name: configure smart-on-fhir service
-  template: src=smart-on-fhir.conf.j2
-            dest=/etc/init/smart-on-fhir.conf
-            owner=root group=root mode=0644
-
-- name: stop smart-on-fhir
-  service: name=smart-on-fhir state=stopped
 
 - name: configure postgres
   copy: src=pg_hba.conf
@@ -34,6 +27,14 @@
           password={{postgres.password}}
           role_attr_flags=SUPERUSER
 
+- name: drop postgres db
+  sudo_user: postgres
+  postgresql_db: state=absent name=fhir
+          
+- name: create postgres db
+  sudo_user: postgres
+  postgresql_db: name=fhir owner={{postgres.user}}
+
 - name: checkout smart-on-fhir
   git: repo={{fhir_server.repo}}
        version={{fhir_server.branch}}
@@ -45,19 +46,10 @@
   shell: chdir={{install_dir}}/smart-on-fhir
         ./grailsw dev war
 
-- name: drop postgres db
-  sudo_user: postgres
-  postgresql_db: state=absent name=fhir
-          
-- name: create postgres db
-  sudo_user: postgres
-  postgresql_db: name=fhir owner={{postgres.user}}
-
-- name: install smart-on-fhir tables
-  environment:
-    JAVA_HOME: "{{java_home_dir}}"
-  shell: chdir={{install_dir}}/smart-on-fhir
-        ./grailsw -DnoTomcat=true run-script scripts/CreateDatabase.groovy
+- name: configure smart-on-fhir service
+  template: src=smart-on-fhir.conf.j2
+            dest=/etc/init/smart-on-fhir.conf
+            owner=root group=root mode=0644
 
 - name: restart smart-on-fhir
   service: name=smart-on-fhir state=restarted
@@ -76,34 +68,19 @@
   shell: chdir={{install_dir}}/smart_sample_patients/bin
          python generate.py --write-fhir ../generated-data
 
-- name: copy load pt script
+- name: list 10 sample patients
   tags: [pts]
-  copy: src=load-patients.sh 
-        dest={{install_dir}}/smart_sample_patients/generated-data/
-
-- name: make load pt script executable
-  tags: [pts]
-  acl: name={{install_dir}}/smart_sample_patients/generated-data/load-patients.sh
-       permissions=rx
-       etype=user
-       state=present
+  shell: ls {{install_dir}}/smart_sample_patients/generated-data/*.xml | head -n 10
+  register: sample_patients
 
 - name: load sample patients
   tags: [pts]
-  shell: chdir={{install_dir}}/smart_sample_patients/generated-data
-         ./load-patients.sh
+  shell: "chdir={{install_dir}}/smart_sample_patients/generated-data/
+         curl
+           -u {{fhir_server.admin.username}}:{{fhir_server.admin.password}}
+           'http://localhost:3000/?'
+           -H 'Content-Type: text/xml' 
+           --data-binary @{{item}}"
+  with_items: sample_patients.stdout_lines
 
-- name: checkout fhir-starter apps
-  tags: [apps]
-  git: repo={{app_server.repo}}
-       version={{app_server.branch}}
-       dest={{install_dir}}/fhir-starter
-
-- name: install sample apps
-  tags: [apps]
-  uri: url={{auth_server.public.pretty}}/api/clients
-       method=POST
-       user={{auth_server.admin.username}}
-       password={{auth_server.admin.password}}
-       body="{{ lookup('file', '../templates/load_app.j2' )}}" force_basic_auth=yes status_code=201 HEADER_Content-Type="application/json"
 

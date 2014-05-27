@@ -22,7 +22,10 @@ fhir_server:
     port: 9080
     host: "107.170.197.65"
     pretty: "http://107.170.197.65:9080"
-  use_auth: false
+  admin:
+    username: client
+    password: secret
+  use_auth: true
   repo: "https://github.com/jmandel/smart-on-fhir.git"
   branch: "smart-launch"
   introspection_uri: "{{auth_server.public.pretty}}/introspect?token={token}"

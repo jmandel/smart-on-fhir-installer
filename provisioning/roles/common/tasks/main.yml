@@ -19,11 +19,41 @@
               state=present
               regexp='^JAVA_HOME'
               line='JAVA_HOME={{java_home_dir}}'
+
+- name: download jetty-runner
+  tags: [apps]
+  get_url: 
+          url={{jetty.download_url}}
+          dest={{install_dir}}/jetty-runner.jar
  
 - include: ldap.yml
 - include: smart-on-fhir.yml
 - include: oidc.yml
-  
+
+- name: checkout fhir-starter apps
+  tags: [apps]
+  git: repo={{app_server.repo}}
+       version={{app_server.branch}}
+       dest={{install_dir}}/fhir-starter
+
+- name: list sample apps
+  tags: [apps]
+  shell: cat {{install_dir}}/fhir-starter/static/fhirStarter/apps.json
+  register: sample_apps
+
+- name: load sample apps
+  tags: [apps]
+  uri: 
+     url='http://localhost:4000/api/clients'
+     method=POST user=client password=secret
+     HEADER_Content-Type="application/json"
+     status_code=200
+     force_basic_auth=yes
+     body='{{ lookup('template', '../templates/load_app.j2') }}'
+  with_items:  "{{ sample_apps.stdout | to_json }}"
+
+
+ 
 - name: configure nginx (fhir-starter apps)
   tags: [apps]
   template: src=nginx_apps.j2 dest=/etc/nginx/sites-enabled/apps owner=root group=root mode=0644
@@ -31,11 +61,13 @@
         - restart nginx
    
 - name: configure nginx (smart-on-fhir server)
+  tags: [apps]
   template: src=nginx_default.j2 dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
   notify:
         - restart nginx
         
 - name: configure nginx (OpenID Connect server)
+  tags: [apps]
   template: src=nginx_oidc.j2 dest=/etc/nginx/sites-enabled/oidc owner=root group=root mode=0644
   notify:
         - restart nginx

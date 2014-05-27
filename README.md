@@ -36,3 +36,14 @@ And when you're done you can shut it down with:
 ```
 vagrant halt
 ```
+
+---
+
+## From a fresh Ubuntu 14.04 machine
+
+```
+apt-get install curl git ansible python-pycurl
+git clone https://github.com/smart-on-fhir/smart-on-fhir-installer
+cd smart-on-fhir-installer/provisioning
+ansible-playbook  -c local -i 'localhost,' -vvvv smart-on-fhir-servers.yml 
+```
