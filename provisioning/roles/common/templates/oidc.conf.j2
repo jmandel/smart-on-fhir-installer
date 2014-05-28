@@ -2,6 +2,9 @@
 description "MitreID Connect"
 author      "Josh Mandel"
 
+setuid {{username}}
+setgid {{username}}
+
 start on runlevel [2345]
 stop on runlevel [!2345]
 

@@ -15,12 +15,14 @@
           role_attr_flags=SUPERUSER
 
 - name: checkout smart-on-fhir
+  sudo_user: "{{username}}"
   git: repo={{fhir_server.repo}}
        version={{fhir_server.branch}}
        dest={{install_dir}}/smart-on-fhir
   register: sof_checkout
 
 - name: build smart-on-fhir server
+  sudo_user: "{{username}}"
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   when: sof_checkout.changed

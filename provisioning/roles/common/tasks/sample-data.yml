@@ -1,10 +1,12 @@
 - name: checkout sample patients
+  sudo_user: "{{username}}"
   git: repo={{sample_patients.repo}}
        version={{sample_patients.branch}}
        dest={{install_dir}}/smart_sample_patients
   register: sample_patients_checkout
 
 - name: build sample patients
+  sudo_user: "{{username}}"
   when: sample_patients_checkout.changed
   shell: chdir={{install_dir}}/smart_sample_patients/bin
          python generate.py --write-fhir ../generated-data
@@ -27,6 +29,7 @@
 
 - name: checkout fhir-starter apps
   tags: [apps,load_apps]
+  sudo_user: "{{username}}"
   git: repo={{app_server.repo}}
        version={{app_server.branch}}
        dest={{install_dir}}/fhir-starter

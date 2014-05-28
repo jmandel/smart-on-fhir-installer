@@ -1,3 +1,11 @@
+- name: Create Group
+  group: name="{{username}}"
+  
+- name: Create User
+  user: name="{{username}}" password="{{userpass}}"
+        group="{{username}}" groups=sudo
+        shell=/bin/bash
+
 - name: add PPA repos
   apt_repository: repo={{item}}
   with_items: ['ppa:webupd8team/java','ppa:nginx/stable']
@@ -34,6 +42,7 @@
 
 - name: download jetty-runner
   tags: [apps]
+  sudo_user: "{{username}}"
   get_url: 
           url={{jetty.download_url}}
           dest={{install_dir}}/jetty-runner.jar

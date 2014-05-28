@@ -26,6 +26,7 @@
   register: ldap_checkout
 
 - name: generate sample LDAP directory
+  sudo_user: "{{username}}"
   template: src="ldap_content.ldif"
             dest="{{install_dir}}/ldap_content.ldif"
 
