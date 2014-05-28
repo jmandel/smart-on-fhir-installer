@@ -23,12 +23,14 @@
   template: src="ldap.conf"
             dest="/etc/ldap/ldap.conf"
             owner=root group=root mode=0644
+  register: ldap_checkout
 
 - name: generate sample LDAP directory
   template: src="ldap_content.ldif"
             dest="{{install_dir}}/ldap_content.ldif"
 
 - name: load sample LDAP directory
+  when: ldap_checkout.changed
   shell: chdir={{install_dir}}
          ldapadd
            -x -D cn=admin,{{ldap_server.base}}

@@ -1,8 +1,10 @@
 - name: configure postgres
   copy: src=pg_hba.conf
         dest=/etc/postgresql/9.3/main/pg_hba.conf
+  register: postgres_conf
 
 - name: restart postgres
+  when: postgres_conf.changed
   service: name=postgresql state=restarted
 
 - name: create postgres user
@@ -12,35 +14,41 @@
           password={{postgres.password}}
           role_attr_flags=SUPERUSER
 
-- name: drop postgres db
-  sudo_user: postgres
-  postgresql_db: state=absent name=fhir
-          
-- name: create postgres db
-  sudo_user: postgres
-  postgresql_db: name=fhir owner={{postgres.user}}
-
 - name: checkout smart-on-fhir
   git: repo={{fhir_server.repo}}
        version={{fhir_server.branch}}
        dest={{install_dir}}/smart-on-fhir
+  register: sof_checkout
 
 - name: build smart-on-fhir server
   environment:
     JAVA_HOME: "{{java_home_dir}}"
+  when: sof_checkout.changed
   shell: chdir={{install_dir}}/smart-on-fhir
         ./grailsw dev war
+        
+- name: drop postgres db
+  sudo_user: postgres
+  when: sof_checkout.changed
+  postgresql_db: state=absent name=fhir
+          
+- name: create postgres db
+  sudo_user: postgres
+  when: sof_checkout.changed
+  postgresql_db: name=fhir owner={{postgres.user}}
 
 - name: configure smart-on-fhir service
   template: src=smart-on-fhir.conf.j2
             dest=/etc/init/smart-on-fhir.conf
             owner=root group=root mode=0644
+  register: sof_service
 
 - name: restart smart-on-fhir
+  when: sof_checkout.changed or sof_service.changed
   service: name=smart-on-fhir state=restarted
  
 - name: wait for smart-on-fhir server to become available
-  wait_for: port=3000 delay=10
+  wait_for: port=3000
 
 - name: configure nginx (fhir-starter apps)
   tags: [apps,nginx]

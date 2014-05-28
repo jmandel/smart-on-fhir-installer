@@ -2,13 +2,13 @@
   apt_repository: repo={{item}}
   with_items: ['ppa:webupd8team/java','ppa:nginx/stable']
 
-- name: update apt cache 
+- name: update aptitude cache 
   apt: update_cache=yes
   
 - name: upgrade server packages
   apt: upgrade=full
   
-- name: install apt packages
+- name: install prerequisite packages
   environment:
     DEBIAN_FRONTEND: noninteractive
   apt: pkg={{item}} force=yes

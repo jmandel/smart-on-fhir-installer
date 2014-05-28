@@ -2,8 +2,10 @@
   git: repo={{sample_patients.repo}}
        version={{sample_patients.branch}}
        dest={{install_dir}}/smart_sample_patients
+  register: sample_patients_checkout
 
 - name: build sample patients
+  when: sample_patients_checkout.changed
   shell: chdir={{install_dir}}/smart_sample_patients/bin
          python generate.py --write-fhir ../generated-data
 
@@ -14,6 +16,7 @@
 
 - name: load sample patients
   tags: [pts]
+  when: sof_checkout.changed or sample_patients_checkout.changed
   shell: "chdir={{install_dir}}/smart_sample_patients/generated-data/
          curl
            -u {{fhir_server.admin.username}}:{{fhir_server.admin.password}}
@@ -27,6 +30,7 @@
   git: repo={{app_server.repo}}
        version={{app_server.branch}}
        dest={{install_dir}}/fhir-starter
+  register: apps_checkout
 
 - name: list sample apps
   tags: [apps, load_apps]
@@ -35,6 +39,7 @@
 
 - name: load sample apps
   tags: [apps, load_apps]
+  when: sof_checkout.changed or apps_checkout.changed
   uri: 
      url='{{auth_server.public.base}}/api/clients'
      method=POST
@@ -44,4 +49,5 @@
      status_code=200
      force_basic_auth=yes
      body='{{ lookup('template', '../templates/load_app.j2') }}'
-  with_items:  "{{ sample_apps.stdout | to_json }}"
+  # Note: this generates a warning with Ansible 1.6.1, but actually is correct
+  with_items: "{{ sample_apps.stdout | to_json }}"
