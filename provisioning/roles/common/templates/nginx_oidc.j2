@@ -19,4 +19,10 @@ server {
       proxy_pass http://oidc;
       proxy_redirect off;
     }
+    
+    {% if auth_server.public.secure_http %}
+    ssl on;
+    ssl_certificate /etc/nginx/ssl/server.crt;
+    ssl_certificate_key /etc/nginx/ssl/server.key;
+    {% endif %}
 }

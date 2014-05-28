@@ -16,6 +16,7 @@ auth_server:
     port: 9085
     host: "localhost"
     base: "http://localhost:9085"
+    secure_http: false
   repo: "https://github.com/jmandel/OpenID-Connect-Java-Spring-Server.git"
   branch: "smart-launch"
   war: ldap-openid-connect-server/openid-connect-server-webapp/target/openid-connect-server-webapp.war
@@ -24,6 +25,7 @@ fhir_server:
     port: 9080
     host: "localhost"
     base: "http://localhost:9080"
+    secure_http: false
   admin:
     username: client
     password: secret
@@ -39,6 +41,7 @@ app_server:
     port: 9090
     host: "localhost"
     base: "http://localhost:9090"
+    secure_http: false
   repo: "https://github.com/smart-on-fhir/fhir-starter.git"
   branch: "smart-launch"
 

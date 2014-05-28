@@ -7,4 +7,10 @@ server {
     location / {
        root {{install_dir}}/fhir-starter/static;
     }
+    
+    {% if app_server.public.secure_http %}
+    ssl on;
+    ssl_certificate /etc/nginx/ssl/server.crt;
+    ssl_certificate_key /etc/nginx/ssl/server.key;
+    {% endif %}
 }

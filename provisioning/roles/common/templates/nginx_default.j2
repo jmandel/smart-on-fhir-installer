@@ -20,4 +20,10 @@ server {
       proxy_pass http://fhir;
       proxy_redirect off;
     }
+    
+    {% if fhir_server.public.secure_http %}
+    ssl on;
+    ssl_certificate /etc/nginx/ssl/server.crt;
+    ssl_certificate_key /etc/nginx/ssl/server.key;
+    {% endif %}
 }
