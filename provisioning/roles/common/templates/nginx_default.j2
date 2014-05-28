@@ -6,7 +6,10 @@ upstream fhir {
 
 # the nginx server instance
 server {
-    listen 9080;
+    {% if fhir_server.public.host %}
+    server_name {{fhir_server.public.host}};
+    {% endif %}
+    listen {{fhir_server.public.port}};
     location / {
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

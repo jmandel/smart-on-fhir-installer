@@ -28,9 +28,9 @@
 - name: wait for auth server to become available
   tags: [auth]
   wait_for: port=4000 delay=10
-          
+
 - name: configure nginx (auth server)
-  tags: [auth]
+  tags: [auth,nginx]
   template: src=nginx_oidc.j2 dest=/etc/nginx/sites-enabled/oidc owner=root group=root mode=0644
   notify:
         - restart nginx
