@@ -3,11 +3,11 @@
   git: repo={{auth_server.repo}}
        version={{auth_server.branch}}
        dest={{install_dir}}/ldap-openid-connect-server
-#  register: oidc_checkout
+  register: oidc_checkout
 
 - name: build auth server
   tags: [auth]
-#  when: oidc_checkout
+  when: oidc_checkout.changed
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/ldap-openid-connect-server
@@ -18,11 +18,11 @@
   template: src=oidc.conf.j2
             dest=/etc/init/oidc.conf
             owner=root group=root mode=0644
-#  register: oidc_reconfigured
+  register: oidc_service
 
 - name: restart auth server
   tags: [auth]
-#  when: oidc_checkout | oidc_reconfigured
+  when: oidc_checkout.changed | oidc_service.changed
   service: name=oidc state=restarted
 
 - name: wait for auth server to become available

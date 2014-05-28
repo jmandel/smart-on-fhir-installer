@@ -28,7 +28,6 @@
        version={{app_server.branch}}
        dest={{install_dir}}/fhir-starter
 
-
 - name: list sample apps
   tags: [apps, load_apps]
   shell: cat {{install_dir}}/fhir-starter/static/fhirStarter/apps.json
