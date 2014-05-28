@@ -41,7 +41,7 @@
   tags: [apps, load_apps]
   when: sof_checkout.changed or apps_checkout.changed
   uri: 
-     url='http://localhost:4000/api/clients'
+     url='{{auth_server.public.base}}/api/clients'
      method=POST
      user={{auth_server.admin.username}}
      password={{auth_server.admin.password}}
