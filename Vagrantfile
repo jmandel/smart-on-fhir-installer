@@ -22,8 +22,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :forwarded_port, guest: 389, host: 1389
   
   config.vm.provision "ansible" do |ansible|
-    # ansible.verbose = "vvvv"
-    # ansible.tags=["nginx"]
+    #ansible.verbose = "vvvv"
+    #ansible.tags=["load_apps"]
     ansible.playbook = "provisioning/smart-on-fhir-servers.yml"
   end
 

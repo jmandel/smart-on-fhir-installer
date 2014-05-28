@@ -11,7 +11,7 @@
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/ldap-openid-connect-server
-       mvn package -DskipTests=true -Dmaven.javadoc.skip=true
+       mvn clean package -DskipTests=true -Dmaven.javadoc.skip=true
 
 - name: configure auth server service
   tags: [auth]

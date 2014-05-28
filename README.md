@@ -45,5 +45,12 @@ vagrant halt
 apt-get install curl git ansible python-pycurl
 git clone https://github.com/smart-on-fhir/smart-on-fhir-installer
 cd smart-on-fhir-installer/provisioning
+```
+
+At this point, you probably want to edit `settings.yml` to suit your needs.
+For example, change `localhost` to some world-routable hostname if that's
+what you need -- and set the app_server public port to 80.
+
+```
 ansible-playbook  -c local -i 'localhost,' -vvvv smart-on-fhir-servers.yml 
 ```
