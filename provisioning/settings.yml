@@ -26,7 +26,7 @@ fhir_server:
     username: client
     password: secret
   use_auth: true
-  repo: "https://github.com/jmandel/smart-on-fhir.git"
+  repo: "https://github.com/smart-on-fhir/smart-on-fhir.git"
   branch: "smart-launch"
   introspection_uri: "{{auth_server.public.base}}/introspect?token={token}"
   register_uri: "{{auth_server.public.base}}/register"
@@ -37,7 +37,7 @@ app_server:
     port: 9090
     host: "localhost"
     base: "http://localhost:9090"
-  repo: "https://github.com/jmandel/fhir-starter.git"
+  repo: "https://github.com/smart-on-fhir/fhir-starter.git"
   branch: "smart-launch"
 
 ldap_server:
