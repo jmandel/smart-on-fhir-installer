@@ -9,11 +9,8 @@ server {
 {% if fhir_server_host %}
     server_name {{fhir_server_host}};
 {% endif %}
-{% if fhir_server_port %}
+
     listen {{fhir_server_port}};
-{% else %}
-    listen {{'443' if fhir_server_secure_http else '80'}};
-{% endif %}
 
     location / {
       proxy_set_header X-Real-IP $remote_addr;
@@ -28,7 +25,7 @@ server {
 
 {% if fhir_server_secure_http %}
     ssl on;
-    ssl_certificate /etc/nginx/ssl/server.crt;
-    ssl_certificate_key /etc/nginx/ssl/server.key;
+    ssl_certificate /etc/nginx/ssl/fhir.crt;
+    ssl_certificate_key /etc/nginx/ssl/fhir.key;
 {% endif %}
 }

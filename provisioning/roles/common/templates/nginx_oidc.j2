@@ -1,4 +1,4 @@
-upstream oidc {
+upstream auth {
     server 127.0.0.1:4000;
 }
 
@@ -7,11 +7,8 @@ server {
 {% if auth_server_host %}
     server_name {{auth_server_host}};
 {% endif %}
-{% if auth_server_port %}
+
     listen {{auth_server_port}};
-{% else %}
-    listen {{'443' if auth_server_secure_http else '80'}};
-{% endif %}
 
     location / {
       proxy_set_header X-Real-IP $remote_addr;
@@ -20,13 +17,13 @@ server {
       proxy_set_header X-NginX-Proxy true;
 
       access_log /var/log/nginx/oidc_access.log;
-      proxy_pass http://oidc;
+      proxy_pass http://auth;
       proxy_redirect off;
     }
 
 {% if auth_server_secure_http %}
     ssl on;
-    ssl_certificate /etc/nginx/ssl/server.crt;
-    ssl_certificate_key /etc/nginx/ssl/server.key;
+    ssl_certificate /etc/nginx/ssl/auth.crt;
+    ssl_certificate_key /etc/nginx/ssl/auth.key;
 {% endif %}
 }

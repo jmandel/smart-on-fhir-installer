@@ -1,3 +1,7 @@
+- name: check host:port uniqueness
+  fail: msg="each server must have unique host:port assigned"
+  when: "'{{auth_server_host}}:{{auth_server_port}}' == '{{fhir_server_host}}:{{fhir_server_port}}' or '{{auth_server_host}}:{{auth_server_port}}' == '{{app_server_host}}:{{app_server_port}}' or '{{fhir_server_host}}:{{fhir_server_port}}' == '{{app_server_host}}:{{app_server_port}}'"
+
 - name: create group
   group: name="{{username}}"
   
@@ -48,11 +52,20 @@
           dest={{install_dir}}/jetty-runner.jar
 
 - name: create ssl certificates directory
+  when: auth_server_secure_http or fhir_server_secure_http or app_server_secure_http
   file: path=/etc/nginx/ssl state=directory owner=root group=root mode=0640
 
-# TO DO: templetize certificate settings and generate individual certificates for each server
-- name: generate self-signed ssl certificates
-  shell: cat /vagrant/certificate_settings.txt | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt
+- name: generate self-signed ssl certificates (auth server)
+  when: auth_server_secure_http
+  shell: cat /vagrant/certificate_settings.txt | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/auth.key -out /etc/nginx/ssl/auth.crt
+
+- name: generate self-signed ssl certificates (fhir server)
+  when: fhir_server_secure_http
+  shell: cat /vagrant/certificate_settings.txt | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/fhir.key -out /etc/nginx/ssl/fhir.crt
+
+- name: generate self-signed ssl certificates (apps server)
+  when: app_server_secure_http
+  shell: cat /vagrant/certificate_settings.txt | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/apps.key -out /etc/nginx/ssl/apps.crt
  
 - include: ldap.yml
 - include: smart-on-fhir.yml
