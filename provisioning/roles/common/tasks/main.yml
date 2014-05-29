@@ -57,7 +57,7 @@
   
 - name: copy custom ssl certificates
   when: (auth_server_secure_http or fhir_server_secure_http or app_server_secure_http) and use_custom_ssl_certificates
-  copy: src={{custom_ssl_certificates_path}}/
+  copy: src={{custom_ssl_certificates_path|default('certificates')}}/
         dest=/etc/nginx/ssl
  
 - include: ldap.yml
