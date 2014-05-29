@@ -54,18 +54,13 @@
 - name: create ssl certificates directory
   when: auth_server_secure_http or fhir_server_secure_http or app_server_secure_http
   file: path=/etc/nginx/ssl state=directory owner=root group=root mode=0640
-
-- name: generate self-signed ssl certificates (auth server)
-  when: auth_server_secure_http
-  shell: echo -e "{{auth_server_ssl_country}}\n{{auth_server_ssl_province}}\n{{auth_server_ssl_locality}}\n{{auth_server_ssl_organization}}\n{{auth_server_ssl_division}}\n{{auth_server_host}}\n{{auth_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/auth.key -out /etc/nginx/ssl/auth.crt
-
-- name: generate self-signed ssl certificates (fhir server)
-  when: fhir_server_secure_http
-  shell: echo -e "{{fhir_server_ssl_country}}\n{{fhir_server_ssl_province}}\n{{fhir_server_ssl_locality}}\n{{fhir_server_ssl_organization}}\n{{fhir_server_ssl_division}}\n{{fhir_server_host}}\n{{fhir_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/fhir.key -out /etc/nginx/ssl/fhir.crt
-
-- name: generate self-signed ssl certificates (apps server)
-  when: app_server_secure_http
-  shell: echo -e "{{app_server_ssl_country}}\n{{app_server_ssl_province}}\n{{app_server_ssl_locality}}\n{{app_server_ssl_organization}}\n{{app_server_ssl_division}}\n{{app_server_host}}\n{{app_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/fhir.key -out /etc/nginx/ssl/fhir.crt
+  
+- name: copy custom ssl certificates
+  when: (auth_server_secure_http or fhir_server_secure_http or app_server_secure_http) and custom_ssl_certificates
+  copy: src={{ item }}
+        dest=/etc/nginx/ssl
+  with_fileglob:
+     - certificates/*
  
 - include: ldap.yml
 - include: smart-on-fhir.yml
