@@ -6,6 +6,10 @@
        dest={{install_dir}}/ldap-openid-connect-server
   register: oidc_checkout
 
+- name: stop auth server
+  when: oidc_checkout.changed
+  service: name=oidc state=stopped
+  
 - name: build auth server
   tags: [auth]
   sudo_user: "{{username}}"

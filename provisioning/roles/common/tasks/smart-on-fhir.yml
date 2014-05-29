@@ -21,6 +21,10 @@
        dest={{install_dir}}/smart-on-fhir
   register: sof_checkout
 
+- name: stop smart-on-fhir
+  when: sof_checkout.changed
+  service: name=smart-on-fhir state=stopped
+  
 - name: build smart-on-fhir server
   sudo_user: "{{username}}"
   environment:
@@ -28,7 +32,7 @@
   when: sof_checkout.changed
   shell: chdir={{install_dir}}/smart-on-fhir
         ./grailsw dev war
-        
+
 - name: drop postgres db
   sudo_user: postgres
   when: sof_checkout.changed
