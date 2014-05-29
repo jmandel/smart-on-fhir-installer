@@ -6,7 +6,7 @@
   group: name="{{username}}"
   
 - name: create user
-  user: name="{{username}}" password="{{userpass}}"
+  user: name="{{username}}" password="{{userpass}}" update_password="on_create"
         group="{{username}}" groups=sudo
         shell=/bin/bash
 
