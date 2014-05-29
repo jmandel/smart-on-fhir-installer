@@ -39,6 +39,32 @@ ldap_server_admin_password: "sample-password"
 sample_patients_repo: "https://github.com/chb/smart_sample_patients.git"
 sample_patients_branch: "fhir"
 
+# Self-signed SSL certificates settings
+auth_server_ssl_country: US
+auth_server_ssl_province: MA
+auth_server_ssl_locality: Boston
+auth_server_ssl_organization: Example Company
+auth_server_ssl_division: support
+auth_server_ssl_email: support@example.com
+fhir_server_ssl_country: "{{auth_server_ssl_country}}"
+fhir_server_ssl_province: "{{auth_server_ssl_province}}"
+fhir_server_ssl_locality: "{{auth_server_ssl_locality}}"
+fhir_server_ssl_organization: "{{auth_server_ssl_organization}}"
+fhir_server_ssl_division: "{{auth_server_ssl_division}}"
+fhir_server_ssl_email: "{{auth_server_ssl_email}}"
+app_server_ssl_country: "{{auth_server_ssl_country}}"
+app_server_ssl_province: "{{auth_server_ssl_province}}"
+app_server_ssl_locality: "{{auth_server_ssl_locality}}"
+app_server_ssl_organization: "{{auth_server_ssl_organization}}"
+app_server_ssl_division: "{{auth_server_ssl_division}}"
+app_server_ssl_email: "{{auth_server_ssl_email}}"
+ldap_server_ssl_country: "{{auth_server_ssl_country}}"
+ldap_server_ssl_province: "{{auth_server_ssl_province}}"
+ldap_server_ssl_locality: "{{auth_server_ssl_locality}}"
+ldap_server_ssl_organization: "{{auth_server_ssl_organization}}"
+ldap_server_ssl_division: "{{auth_server_ssl_division}}"
+ldap_server_ssl_email: "{{auth_server_ssl_email}}"
+
 # Construct server base URLs
 auth_server_base: "{{'https' if auth_server_secure_http else 'http'}}://{{auth_server_host}}{{(':'+auth_server_port|string) if auth_server_port not in (80,443) else ''}}"
 app_server_base: "{{'https' if app_server_secure_http else 'http'}}://{{app_server_host}}{{(':'+app_server_port|string) if app_server_port not in (80,443) else ''}}"

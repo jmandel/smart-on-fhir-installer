@@ -1,7 +1,0 @@
-US
-MA
-Boston
-Example Organization
-support
-localhost
-support@example.com
