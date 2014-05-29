@@ -13,6 +13,7 @@ script
     java \
        -DBASE_URL="{{auth_server.public.base}}" \
        -DCONTEXT_FHIR_ENDPOINT="{{fhir_server.public.base}}"\
+       -DCONTEXT_RESOLVE_ENDPOINT="{{app_server.public.base}}"\
        -Dldap.server="{{ldap_server.uri}}" \
        -Dldap.url="{{ldap_server.uri}}" \
        -Dldap.base="ou=People,{{ldap_server.base}}" \
