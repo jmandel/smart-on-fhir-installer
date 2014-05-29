@@ -17,7 +17,6 @@
 
 - name: configure auth server service
   tags: [auth]
-  sudo_user: "{{username}}"
   template: src=oidc.conf.j2
             dest=/etc/init/oidc.conf
             owner=root group=root mode=0644
