@@ -1,3 +1,11 @@
+- name: create group
+  group: name="{{username}}"
+  
+- name: create user
+  user: name="{{username}}" password="{{userpass}}"
+        group="{{username}}" groups=sudo
+        shell=/bin/bash
+
 - name: add PPA repos
   apt_repository: repo={{item}}
   with_items: ['ppa:webupd8team/java','ppa:nginx/stable']
@@ -34,9 +42,17 @@
 
 - name: download jetty-runner
   tags: [apps]
+  sudo_user: "{{username}}"
   get_url: 
-          url={{jetty.download_url}}
+          url={{jetty_download_url}}
           dest={{install_dir}}/jetty-runner.jar
+
+- name: create ssl certificates directory
+  file: path=/etc/nginx/ssl state=directory owner=root group=root mode=0640
+
+# TO DO: templetize certificate settings and generate individual certificates for each server
+- name: generate self-signed ssl certificates
+  shell: cat /vagrant/certificate_settings.txt | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt
  
 - include: ldap.yml
 - include: smart-on-fhir.yml

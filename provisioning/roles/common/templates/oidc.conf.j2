@@ -2,6 +2,9 @@
 description "MitreID Connect"
 author      "Josh Mandel"
 
+setuid {{username}}
+setgid {{username}}
+
 start on runlevel [2345]
 stop on runlevel [!2345]
 
@@ -11,12 +14,12 @@ respawn limit 10 5
 script
     chdir {{install_dir}}
     java \
-       -DBASE_URL="{{auth_server.public.base}}" \
-       -DCONTEXT_FHIR_ENDPOINT="{{fhir_server.public.base}}"\
-       -DCONTEXT_RESOLVE_ENDPOINT="{{app_server.public.base}}"\
-       -Dldap.server="{{ldap_server.uri}}" \
-       -Dldap.url="{{ldap_server.uri}}" \
-       -Dldap.base="ou=People,{{ldap_server.base}}" \
+       -DBASE_URL="{{auth_server_base}}" \
+       -DCONTEXT_FHIR_ENDPOINT="{{fhir_server_base}}"\
+       -DCONTEXT_RESOLVE_ENDPOINT="{{app_server_base}}"\
+       -Dldap.server="{{ldap_server_uri}}" \
+       -Dldap.url="{{ldap_server_uri}}" \
+       -Dldap.base="ou=People,{{ldap_server_base}}" \
        -jar jetty-runner.jar --host localhost --port 4000 \
-       {{auth_server.war}}
+       {{auth_server_war}}
 end script

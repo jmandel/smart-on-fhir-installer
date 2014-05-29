@@ -1,10 +1,12 @@
 - name: checkout sample patients
-  git: repo={{sample_patients.repo}}
-       version={{sample_patients.branch}}
+  sudo_user: "{{username}}"
+  git: repo={{sample_patients_repo}}
+       version={{sample_patients_branch}}
        dest={{install_dir}}/smart_sample_patients
   register: sample_patients_checkout
 
 - name: build sample patients
+  sudo_user: "{{username}}"
   when: sample_patients_checkout.changed
   shell: chdir={{install_dir}}/smart_sample_patients/bin
          python generate.py --write-fhir ../generated-data
@@ -19,7 +21,7 @@
   when: sof_checkout.changed or sample_patients_checkout.changed
   shell: "chdir={{install_dir}}/smart_sample_patients/generated-data/
          curl
-           -u {{fhir_server.admin.username}}:{{fhir_server.admin.password}}
+           -u {{fhir_server_username}}:{{fhir_server_password}}
            'http://localhost:3000/?'
            -H 'Content-Type: text/xml' 
            --data-binary @{{item}}"
@@ -27,8 +29,9 @@
 
 - name: checkout fhir-starter apps
   tags: [apps,load_apps]
-  git: repo={{app_server.repo}}
-       version={{app_server.branch}}
+  sudo_user: "{{username}}"
+  git: repo={{app_server_repo}}
+       version={{app_server_branch}}
        dest={{install_dir}}/fhir-starter
   register: apps_checkout
 
@@ -41,10 +44,10 @@
   tags: [apps, load_apps]
   when: sof_checkout.changed or apps_checkout.changed or oidc_checkout.changed or oidc_service.changed
   uri: 
-     url='{{auth_server.public.base}}/api/clients'
+     url='{{auth_server_base}}/api/clients'
      method=POST
-     user={{auth_server.admin.username}}
-     password={{auth_server.admin.password}}
+     user={{auth_server_username}}
+     password={{auth_server_password}}
      HEADER_Content-Type="application/json"
      status_code=200
      force_basic_auth=yes

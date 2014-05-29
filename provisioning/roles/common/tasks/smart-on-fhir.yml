@@ -10,17 +10,19 @@
 - name: create postgres user
   sudo_user: postgres
   postgresql_user: 
-          name={{postgres.user}} 
-          password={{postgres.password}}
+          name={{postgres_user}} 
+          password={{postgres_password}}
           role_attr_flags=SUPERUSER
 
 - name: checkout smart-on-fhir
-  git: repo={{fhir_server.repo}}
-       version={{fhir_server.branch}}
+  sudo_user: "{{username}}"
+  git: repo={{fhir_server_repo}}
+       version={{fhir_server_branch}}
        dest={{install_dir}}/smart-on-fhir
   register: sof_checkout
 
 - name: build smart-on-fhir server
+  sudo_user: "{{username}}"
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   when: sof_checkout.changed
@@ -35,7 +37,7 @@
 - name: create postgres db
   sudo_user: postgres
   when: sof_checkout.changed
-  postgresql_db: name=fhir owner={{postgres.user}}
+  postgresql_db: name=fhir owner={{postgres_user}}
 
 - name: configure smart-on-fhir service
   template: src=smart-on-fhir.conf.j2

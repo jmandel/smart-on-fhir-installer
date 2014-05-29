@@ -1,12 +1,14 @@
 - name: checkout auth server
   tags: [auth]
-  git: repo={{auth_server.repo}}
-       version={{auth_server.branch}}
+  sudo_user: "{{username}}"
+  git: repo={{auth_server_repo}}
+       version={{auth_server_branch}}
        dest={{install_dir}}/ldap-openid-connect-server
   register: oidc_checkout
 
 - name: build auth server
   tags: [auth]
+  sudo_user: "{{username}}"
   when: oidc_checkout.changed
   environment:
     JAVA_HOME: "{{java_home_dir}}"
