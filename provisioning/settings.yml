@@ -3,55 +3,41 @@ username: fhir
 userpass: secretpass
 install_dir: "/home/{{username}}"
 java_home_dir: "/usr/lib/jvm/java-7-oracle"
-jetty:
-  download_url: "http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.0.M0/jetty-runner-9.1.0.M0.jar"
-postgres:
-  user: "fhir"
-  password: "fhir"
-auth_server:
-  admin:
-    username: client
-    password: secret
-  public:
-    port: 9085
-    host: "localhost"
-    base: "http://localhost:9085"
-    secure_http: false
-  repo: "https://github.com/jmandel/OpenID-Connect-Java-Spring-Server.git"
-  branch: "smart-launch"
-  war: ldap-openid-connect-server/openid-connect-server-webapp/target/openid-connect-server-webapp.war
-fhir_server: 
-  public:
-    port: 9080
-    host: "localhost"
-    base: "http://localhost:9080"
-    secure_http: false
-  admin:
-    username: client
-    password: secret
-  use_auth: true
-  repo: "https://github.com/smart-on-fhir/smart-on-fhir.git"
-  branch: "smart-launch"
-  introspection_uri: "{{auth_server.public.base}}/introspect?token={token}"
-  register_uri: "{{auth_server.public.base}}/register"
-  authorize_uri: "{{auth_server.public.base}}/authorize"
-  token_uri: "{{auth_server.public.base}}/token"
-app_server: 
-  public:
-    port: 9090
-    host: "localhost"
-    base: "http://localhost:9090"
-    secure_http: false
-  repo: "https://github.com/smart-on-fhir/fhir-starter.git"
-  branch: "smart-launch"
-
-ldap_server:
-  domain: "example.com"
-  base: "dc=example,dc=com"
-  uri: "ldap://localhost:389"
-  organization: "Example Company"
-  admin_password: "sample-password"
-
-sample_patients:
-  repo: "https://github.com/chb/smart_sample_patients.git"
-  branch: "fhir"
+jetty_download_url: "http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.0.M0/jetty-runner-9.1.0.M0.jar"
+postgres_user: "fhir"
+postgres_password: "fhir"
+auth_server_username: client
+auth_server_password: secret
+auth_server_port: 9085
+auth_server_host: "localhost"
+auth_server_base: "http://localhost:9085"
+auth_server_secure_http: false
+auth_server_repo: "https://github.com/jmandel/OpenID-Connect-Java-Spring-Server.git"
+auth_server_branch: "smart-launch"
+auth_server_war: ldap-openid-connect-server/openid-connect-server-webapp/target/openid-connect-server-webapp.war
+fhir_server_port: 9080
+fhir_server_host: "localhost"
+fhir_server_base: "http://localhost:9080"
+fhir_server_secure_http: false
+fhir_server_username: client
+fhir_server_password: secret
+fhir_server_use_auth: true
+fhir_server_repo: "https://github.com/smart-on-fhir/smart-on-fhir.git"
+fhir_server_branch: "smart-launch"
+fhir_server_introspection_uri: "{{auth_server_base}}/introspect?token={token}"
+fhir_server_register_uri: "{{auth_server_base}}/register"
+fhir_server_authorize_uri: "{{auth_server_base}}/authorize"
+fhir_server_token_uri: "{{auth_server_base}}/token"
+app_server_port: 9090
+app_server_host: "localhost"
+app_server_base: "http://localhost:9090"
+app_server_secure_http: false
+app_server_repo: "https://github.com/smart-on-fhir/fhir-starter.git"
+app_server_branch: "smart-launch"
+ldap_server_domain: "example.com"
+ldap_server_base: "dc=example,dc=com"
+ldap_server_uri: "ldap://localhost:389"
+ldap_server_organization: "Example Company"
+ldap_server_admin_password: "sample-password"
+sample_patients_repo: "https://github.com/chb/smart_sample_patients.git"
+sample_patients_branch: "fhir"

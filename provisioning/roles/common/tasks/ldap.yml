@@ -1,14 +1,14 @@
 - name: automatically select the OpenLDAP configuration settings
   shell: echo "slapd {{item}}" | sudo debconf-set-selections
   with_items:
-         - slapd/password1 password {{ldap_server.admin_password}}
-         - slapd/password2 password {{ldap_server.admin_password}}
+         - slapd/password1 password {{ldap_server_admin_password}}
+         - slapd/password2 password {{ldap_server_admin_password}}
          - slapd/allow_ldap_v2 boolean false
-         - shared/organization string {{ldap_server.organization}}
+         - shared/organization string {{ldap_server_organization}}
          - slapd/no_configuration boolean false
          - slapd/move_old_database boolean true
          - slapd/purge_database boolean true
-         - slapd/domain string {{ldap_server.domain}}
+         - slapd/domain string {{ldap_server_domain}}
          - slapd/backend boolean HDB
 
 - name: install ldap apt packages
@@ -34,6 +34,6 @@
   when: ldap_checkout.changed
   shell: chdir={{install_dir}}
          ldapadd
-           -x -D cn=admin,{{ldap_server.base}}
-           -w {{ldap_server.admin_password}}
+           -x -D cn=admin,{{ldap_server_base}}
+           -w {{ldap_server_admin_password}}
            -f ldap_content.ldif

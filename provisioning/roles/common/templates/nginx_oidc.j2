@@ -4,11 +4,11 @@ upstream oidc {
 
 # the nginx server instance
 server {
-    {% if auth_server.public.host %}
-    server_name {{auth_server.public.host}};
+    {% if auth_server_host %}
+    server_name {{auth_server_host}};
     {% endif %}
 
-    listen {{auth_server.public.port}};
+    listen {{auth_server_port}};
     location / {
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -20,7 +20,7 @@ server {
       proxy_redirect off;
     }
     
-    {% if auth_server.public.secure_http %}
+    {% if auth_server_secure_http %}
     ssl on;
     ssl_certificate /etc/nginx/ssl/server.crt;
     ssl_certificate_key /etc/nginx/ssl/server.key;

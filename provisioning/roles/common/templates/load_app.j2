@@ -2,8 +2,8 @@
   "clientId": "{{item.client_id}}",
   "clientName": "{{item.client_name}}",
   "logoUri": "{{item.logo_uri}}",
-  "initiateLoginUri":"{{app_server.public.base}}/{{item.launch_uri|default("null")}}",
-  "redirectUris": ["{{app_server.public.base}}/{{item.redirect_uri}}"],
+  "initiateLoginUri":"{{app_server_base}}/{{item.launch_uri|default("null")}}",
+  "redirectUris": ["{{app_server_base}}/{{item.redirect_uri}}"],
   "scope": [
     "launch",
     "user/*.*",

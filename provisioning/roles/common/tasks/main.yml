@@ -44,7 +44,7 @@
   tags: [apps]
   sudo_user: "{{username}}"
   get_url: 
-          url={{jetty.download_url}}
+          url={{jetty_download_url}}
           dest={{install_dir}}/jetty-runner.jar
 
 - name: create ssl certificates directory

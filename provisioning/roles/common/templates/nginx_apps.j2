@@ -1,14 +1,14 @@
 server {
-    listen {{app_server.public.port}};
-    {% if app_server.public.host %}
-    server_name {{app_server.public.host}};
+    listen {{app_server_port}};
+    {% if app_server_host %}
+    server_name {{app_server_host}};
     {% endif %}
 
     location / {
        root {{install_dir}}/fhir-starter/static;
     }
     
-    {% if app_server.public.secure_http %}
+    {% if app_server_secure_http %}
     ssl on;
     ssl_certificate /etc/nginx/ssl/server.crt;
     ssl_certificate_key /etc/nginx/ssl/server.key;

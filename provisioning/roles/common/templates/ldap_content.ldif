@@ -1,8 +1,8 @@
-dn: ou=People,{{ldap_server.base}}
+dn: ou=People,{{ldap_server_base}}
 objectClass: organizationalUnit
 ou: People
 
-dn: uid=demo,ou=People,{{ldap_server.base}}
+dn: uid=demo,ou=People,{{ldap_server_base}}
 objectClass: inetOrgPerson
 objectClass: simpleSecurityObject
 objectClass: shadowAccount
@@ -14,7 +14,7 @@ displayName: Demo User
 mail: demo@example.com
 userPassword: demo
 
-dn: uid=admin,ou=People,{{ldap_server.base}}
+dn: uid=admin,ou=People,{{ldap_server_base}}
 objectClass: inetOrgPerson
 objectClass: simpleSecurityObject
 objectClass: shadowAccount
