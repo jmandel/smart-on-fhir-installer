@@ -6,10 +6,15 @@ upstream fhir {
 
 # the nginx server instance
 server {
-    {% if fhir_server_host %}
+{% if fhir_server_host %}
     server_name {{fhir_server_host}};
-    {% endif %}
+{% endif %}
+{% if fhir_server_port %}
     listen {{fhir_server_port}};
+{% else %}
+    listen {{'443' if fhir_server_secure_http else '80'}};
+{% endif %}
+
     location / {
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -20,10 +25,10 @@ server {
       proxy_pass http://fhir;
       proxy_redirect off;
     }
-    
-    {% if fhir_server_secure_http %}
+
+{% if fhir_server_secure_http %}
     ssl on;
     ssl_certificate /etc/nginx/ssl/server.crt;
     ssl_certificate_key /etc/nginx/ssl/server.key;
-    {% endif %}
+{% endif %}
 }
