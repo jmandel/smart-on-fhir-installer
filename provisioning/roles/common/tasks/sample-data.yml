@@ -42,9 +42,9 @@
 
 - name: load sample apps
   tags: [apps, load_apps]
-  when: sof_checkout.changed or apps_checkout.changed
+  when: sof_checkout.changed or apps_checkout.changed or oidc_checkout.changed or oidc_service.changed
   uri: 
-     url='http://localhost:4000/api/clients'
+     url='{{auth_server_base}}/api/clients'
      method=POST
      user={{auth_server_username}}
      password={{auth_server_password}}
@@ -53,4 +53,4 @@
      force_basic_auth=yes
      body='{{ lookup('template', '../templates/load_app.j2') }}'
   # Note: this generates a warning with Ansible 1.6.1, but actually is correct
-  with_items: "{{sample_apps.stdout | to_json}}"
+  with_items: "{{ sample_apps.stdout | to_json }}"

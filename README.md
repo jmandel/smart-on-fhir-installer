@@ -18,8 +18,11 @@ vagrant up
 
 ... wait ~20min while everything installs (depending on your Internet connection speed).
 
-Now visit `http://localhost:9080` in a web browser on your local ("host")
-machine and you should have a working FHIR server. 
+Now visit in a web browser on your local ("host") machine:
+
+ * `http://localhost:9080`  for a FHIR API server
+ * `http://localhost:9085`  for an OAuth2 authorization server
+ * `http://localhost:9090`  for a SMART apps server
 
 The OpenID Connect authentication server should be at `http://localhost:9085`. It uses
 the OpenLDAP server running on the virtual machine. The two sample accounts are `demo/demo` and
