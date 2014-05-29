@@ -7,7 +7,7 @@ jetty_download_url: "http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runne
 postgres_user: "fhir"
 postgres_password: "fhir"
 custom_ssl_certificates: false
-auth_server_secure_http: true
+auth_server_secure_http: false
 auth_server_host: "localhost"
 auth_server_port: 9085
 auth_server_username: client
