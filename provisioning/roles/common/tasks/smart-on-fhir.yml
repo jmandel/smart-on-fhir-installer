@@ -44,12 +44,12 @@
   postgresql_db: name=fhir owner={{postgres_user}}
   
 - name: generate self-signed ssl certificate (fhir server)
-  when: fhir_server_secure_http and not custom_ssl_certificates
+  when: fhir_server_secure_http and not use_custom_ssl_certificates
   shell: creates=/etc/nginx/ssl/fhir.crt
          echo -e "{{fhir_server_ssl_country}}\n{{fhir_server_ssl_province}}\n{{fhir_server_ssl_locality}}\n{{fhir_server_ssl_organization}}\n{{fhir_server_ssl_division}}\n{{fhir_server_host}}\n{{fhir_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/fhir.key -out /etc/nginx/ssl/fhir.crt
 
 - name: generate self-signed ssl certificate (apps server)
-  when: app_server_secure_http and not custom_ssl_certificates
+  when: app_server_secure_http and not use_custom_ssl_certificates
   shell: creates=/etc/nginx/ssl/app.crt
          echo -e "{{app_server_ssl_country}}\n{{app_server_ssl_province}}\n{{app_server_ssl_locality}}\n{{app_server_ssl_organization}}\n{{app_server_ssl_division}}\n{{app_server_host}}\n{{app_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/app.key -out /etc/nginx/ssl/app.crt
   

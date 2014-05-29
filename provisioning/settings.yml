@@ -6,7 +6,9 @@ java_home_dir: "/usr/lib/jvm/java-7-oracle"
 jetty_download_url: "http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.0.M0/jetty-runner-9.1.0.M0.jar"
 postgres_user: "fhir"
 postgres_password: "fhir"
-custom_ssl_certificates: false
+use_custom_ssl_certificates: false
+custom_ssl_certificates_path: certificates
+#custom_ssl_certificates_path: /example/local/path
 auth_server_secure_http: false
 auth_server_host: "localhost"
 auth_server_port: 9085

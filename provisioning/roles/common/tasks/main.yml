@@ -56,11 +56,9 @@
   file: path=/etc/nginx/ssl state=directory owner=root group=root mode=0640
   
 - name: copy custom ssl certificates
-  when: (auth_server_secure_http or fhir_server_secure_http or app_server_secure_http) and custom_ssl_certificates
-  copy: src={{ item }}
+  when: (auth_server_secure_http or fhir_server_secure_http or app_server_secure_http) and use_custom_ssl_certificates
+  copy: src={{custom_ssl_certificates_path}}/
         dest=/etc/nginx/ssl
-  with_fileglob:
-     - certificates/*
  
 - include: ldap.yml
 - include: smart-on-fhir.yml
