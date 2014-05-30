@@ -1,3 +1,10 @@
+- name: configure auth server service
+  tags: [auth]
+  template: src=oidc.conf.j2
+            dest=/etc/init/oidc.conf
+            owner=root group=root mode=0644
+  register: oidc_service
+
 - name: checkout auth server
   tags: [auth]
   sudo_user: "{{username}}"
@@ -5,14 +12,10 @@
        version={{auth_server_branch}}
        dest={{install_dir}}/ldap-openid-connect-server
   register: oidc_checkout
-
-- name: check if oidc service exists
-  stat: path=/etc/init/oidc.conf
-  register: auth_service
-
+  
 - name: stop auth server
   tags: [auth]
-  when: oidc_checkout.changed and auth_service.stat.exists
+  when: oidc_checkout.changed
   service: name=oidc state=stopped
   
 - name: build auth server
@@ -23,18 +26,6 @@
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/ldap-openid-connect-server
        mvn clean package -DskipTests=true -Dmaven.javadoc.skip=true
-       
-- name: generate self-signed ssl certificate (auth server)
-  when: auth_server_secure_http and not use_custom_ssl_certificates
-  shell: creates=/etc/nginx/ssl/auth.crt
-         echo -e "{{auth_server_ssl_country}}\n{{auth_server_ssl_province}}\n{{auth_server_ssl_locality}}\n{{auth_server_ssl_organization}}\n{{auth_server_ssl_division}}\n{{auth_server_host}}\n{{auth_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/auth.key -out /etc/nginx/ssl/auth.crt
-
-- name: configure auth server service
-  tags: [auth]
-  template: src=oidc.conf.j2
-            dest=/etc/init/oidc.conf
-            owner=root group=root mode=0644
-  register: oidc_service
 
 - name: restart auth server
   tags: [auth]
@@ -45,6 +36,12 @@
   tags: [auth]
   wait_for: port=4000
 
+- name: generate self-signed ssl certificate (auth server)
+  tags: [auth,nginx]
+  when: auth_server_secure_http and not use_custom_ssl_certificates
+  shell: creates=/etc/nginx/ssl/auth.crt
+         echo -e "{{auth_server_ssl_country}}\n{{auth_server_ssl_province}}\n{{auth_server_ssl_locality}}\n{{auth_server_ssl_organization}}\n{{auth_server_ssl_division}}\n{{auth_server_host}}\n{{auth_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/auth.key -out /etc/nginx/ssl/auth.crt
+  
 - name: configure nginx (auth server)
   tags: [auth,nginx]
   template: src=nginx_oidc.j2 dest=/etc/nginx/sites-enabled/oidc owner=root group=root mode=0644
