@@ -89,9 +89,13 @@
   template: src="certinfo.ldif.j2"
             dest="{{install_dir}}/certinfo.ldif"
             
-- name: configure ldap server tls 
-  when: ldap_server_tls_support
-  shell: ldapmodify -Y EXTERNAL -H ldapi:/// -f {{install_dir}}/certinfo.ldif
+#- name: configure ldap server tls 
+#  when: ldap_server_tls_support
+#  shell: ldapmodify
+#           -ZZ -x -D cn=admin,{{ldap_server_base}}
+#           -w {{ldap_server_admin_password}}
+#           -Y EXTERNAL -H ldapi:/// -f {{install_dir}}/certinfo.ldif
+#  failed_when: False
 
 - name: add openldap user to ssl-cert group
   user: name=openldap groups=ssl-cert

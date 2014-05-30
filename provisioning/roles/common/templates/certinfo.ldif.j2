@@ -1,9 +1,23 @@
 dn: cn=config
-add: olcTLSCACertificateFile
+replace: olcTLSCACertificateFile
 olcTLSCACertificateFile: /etc/ssl/certs/cacert.pem
 -
-add: olcTLSCertificateFile
+replace: olcTLSCertificateFile
 olcTLSCertificateFile: /etc/ssl/certs/ldap01_slapd_cert.pem
 -
-add: olcTLSCertificateKeyFile
+replace: olcTLSCertificateKeyFile
 olcTLSCertificateKeyFile: /etc/ssl/private/ldap01_slapd_key.pem
+-
+replace: olcDisallows
+olcDisallows: bind_anon
+-
+replace: olcRequires
+olcRequires: authc
+
+dn: olcDatabase={-1}frontend,cn=config
+replace: olcRequires
+olcRequires: authc
+
+dn: olcDatabase={1}hdb,cn=config
+replace: olcSecurity
+olcSecurity: tls=1
