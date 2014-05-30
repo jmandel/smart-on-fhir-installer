@@ -6,9 +6,13 @@
        dest={{install_dir}}/ldap-openid-connect-server
   register: oidc_checkout
 
+- name: check if oidc service exists
+  stat: path=/etc/init/oidc.conf
+  register: auth_service
+
 - name: stop auth server
   tags: [auth]
-  when: oidc_checkout.changed
+  when: oidc_checkout.changed and auth_service.stat.exists
   service: name=oidc state=stopped
   
 - name: build auth server

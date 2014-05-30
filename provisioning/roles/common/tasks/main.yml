@@ -2,6 +2,19 @@
   fail: msg="each server must have unique host:port assigned"
   when: "'{{auth_server_host}}:{{auth_server_port}}' == '{{fhir_server_host}}:{{fhir_server_port}}' or '{{auth_server_host}}:{{auth_server_port}}' == '{{app_server_host}}:{{app_server_port}}' or '{{fhir_server_host}}:{{fhir_server_port}}' == '{{app_server_host}}:{{app_server_port}}'"
 
+- name: install prerequisite packages
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  apt: pkg={{item}} force=yes
+  with_items:
+         - git
+         - nginx
+         - maven
+         - postgresql
+         - python-psycopg2
+         - python-jinja2
+         - python-pycurl
+
 - name: create group
   group: name="{{username}}"
   
@@ -20,17 +33,6 @@
 - name: upgrade server packages
   apt: upgrade=full
   
-- name: install prerequisite packages
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-  apt: pkg={{item}} force=yes
-  with_items:
-         - git
-         - nginx
-         - maven
-         - postgresql
-         - python-psycopg2
-         - python-jinja2
 
 - name: automatically select the Oracle License
   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections

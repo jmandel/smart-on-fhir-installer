@@ -21,8 +21,12 @@
        dest={{install_dir}}/smart-on-fhir
   register: sof_checkout
 
+- name: check if sof service exists
+  stat: path=/etc/init/smart-on-fhir.conf
+  register: sof_service
+
 - name: stop smart-on-fhir
-  when: sof_checkout.changed
+  when: sof_checkout.changed and sof_service.stat.exists
   service: name=smart-on-fhir state=stopped
   
 - name: build smart-on-fhir server
