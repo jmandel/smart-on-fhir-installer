@@ -45,7 +45,8 @@ vagrant halt
 ## From a fresh Ubuntu 14.04 machine
 
 ```
-apt-get install curl git ansible python-pycurl
+apt-get install curl git python-pycurl python-pip
+pip install ansible==1.6.*
 git clone https://github.com/smart-on-fhir/smart-on-fhir-installer
 cd smart-on-fhir-installer/provisioning
 ```
