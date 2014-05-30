@@ -13,6 +13,12 @@
           name={{postgres_user}} 
           password={{postgres_password}}
           role_attr_flags=SUPERUSER
+          
+- name: configure smart-on-fhir service
+  template: src=smart-on-fhir.conf.j2
+            dest=/etc/init/smart-on-fhir.conf
+            owner=root group=root mode=0644
+  register: sof_service
 
 - name: checkout smart-on-fhir
   sudo_user: "{{username}}"
@@ -21,12 +27,8 @@
        dest={{install_dir}}/smart-on-fhir
   register: sof_checkout
 
-- name: check if sof service exists
-  stat: path=/etc/init/smart-on-fhir.conf
-  register: sof_service
-
 - name: stop smart-on-fhir
-  when: sof_checkout.changed and sof_service.stat.exists
+  when: sof_checkout.changed
   service: name=smart-on-fhir state=stopped
   
 - name: build smart-on-fhir server
@@ -46,6 +48,13 @@
   sudo_user: postgres
   when: sof_checkout.changed
   postgresql_db: name=fhir owner={{postgres_user}}
+
+- name: restart smart-on-fhir
+  when: sof_checkout.changed or sof_service.changed
+  service: name=smart-on-fhir state=restarted
+ 
+- name: wait for smart-on-fhir server to become available
+  wait_for: port=3000
   
 - name: generate self-signed ssl certificate (fhir server)
   when: fhir_server_secure_http and not use_custom_ssl_certificates
@@ -56,19 +65,6 @@
   when: app_server_secure_http and not use_custom_ssl_certificates
   shell: creates=/etc/nginx/ssl/app.crt
          echo -e "{{app_server_ssl_country}}\n{{app_server_ssl_province}}\n{{app_server_ssl_locality}}\n{{app_server_ssl_organization}}\n{{app_server_ssl_division}}\n{{app_server_host}}\n{{app_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/app.key -out /etc/nginx/ssl/app.crt
-  
-- name: configure smart-on-fhir service
-  template: src=smart-on-fhir.conf.j2
-            dest=/etc/init/smart-on-fhir.conf
-            owner=root group=root mode=0644
-  register: sof_service
-
-- name: restart smart-on-fhir
-  when: sof_checkout.changed or sof_service.changed
-  service: name=smart-on-fhir state=restarted
- 
-- name: wait for smart-on-fhir server to become available
-  wait_for: port=3000
 
 - name: configure nginx (fhir-starter apps)
   tags: [apps,nginx]
