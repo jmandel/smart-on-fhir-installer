@@ -10,6 +10,7 @@
          - git
          - nginx
          - maven
+         - curl
          - postgresql
          - python-psycopg2
          - python-jinja2
