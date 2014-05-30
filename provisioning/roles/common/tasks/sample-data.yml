@@ -35,6 +35,11 @@
        dest={{install_dir}}/fhir-starter
   register: apps_checkout
 
+- name: configure fhir-starter
+  tags: [apps,load_apps]
+  sudo_user: "{{username}}"
+  shell: sed -i -e's/http:\/\/localhost:9080/{{ fhir_server_base | regex_replace('/', '\\/') }}/' {{install_dir}}/fhir-starter/static/fhirStarter/services.js
+
 - name: list sample apps
   tags: [apps, load_apps]
   shell: cat {{install_dir}}/fhir-starter/static/fhirStarter/apps.json
