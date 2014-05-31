@@ -28,7 +28,7 @@
   with_items: sample_patient_files.stdout_lines
 
 - name: checkout fhir-starter apps
-  tags: [apps,load_apps]
+  tags: [apps]
   sudo_user: "{{username}}"
   git: repo={{app_server_repo}}
        version={{app_server_branch}}
@@ -36,7 +36,7 @@
   register: apps_checkout
 
 - name: configure fhir-starter
-  tags: [apps,load_apps]
+  tags: [apps]
   sudo_user: "{{username}}"
   shell: sed -i -e 's/http:\/\/localhost:9080/{{ fhir_server_base | regex_replace('/', '\\/') }}/' {{install_dir}}/fhir-starter/static/fhirStarter/services.js
 
@@ -45,17 +45,17 @@
   shell: cat {{install_dir}}/fhir-starter/static/fhirStarter/apps.json
   register: sample_apps
 
-- name: load sample apps
+- name: copy load-app script
   tags: [apps, load_apps]
-  when: sof_checkout.changed or apps_checkout.changed or auth_checkout.changed or auth_service.changed
-  uri: 
-     url='{{auth_server_base}}/api/clients'
-     method=POST
-     user={{auth_server_username}}
-     password={{auth_server_password}}
-     HEADER_Content-Type="application/json"
-     status_code=200
-     force_basic_auth=yes
-     body='{{ lookup('template', '../templates/load_app.j2') }}'
-  # Note: this generates a warning with Ansible 1.6.1, but actually is correct
-  with_items: "{{ sample_apps.stdout | to_json }}"
+  copy: src=load_sample_app.py dest={{install_dir}} mode=700
+ 
+- name: load sample app
+  tags: [apps, load_apps]
+  shell: chdir={{install_dir}}
+     ./load_sample_app.py
+         '{{lookup('template', '../templates/load_app.j2')}}'
+         '{{auth_server_base}}'
+         '{{auth_server_username}}'
+         '{{auth_server_password}}'
+  with_flattened: 
+    - "{{ sample_apps.stdout | to_json }}"

@@ -1,0 +1,50 @@
+{
+  "sectorIdentifierUri": null, 
+  "idTokenValiditySeconds": 600, 
+  "allowIntrospection": true, 
+  "postLogoutRedirectUri": null, 
+  "subjectType": null, 
+  "idTokenEncryptedResponseAlg": null, 
+  "grantTypes": [
+    "implicit"
+  ], 
+  "authorities": [], 
+  "userInfoSignedResponseAlg": null, 
+  "initiateLoginUri": null, 
+  "defaultACRvalues": [], 
+  "userInfoEncryptedResponseEnc": null, 
+  "createdAt": null, 
+  "userInfoEncryptedResponseAlg": null, 
+  "contacts": [], 
+  "defaultMaxAge": null, 
+  "policyUri": null, 
+  "resourceIds": [], 
+  "accessTokenValiditySeconds": 3600, 
+  "tosUri": null, 
+  "tokenEndpointAuthSigningAlg": null, 
+  "responseTypes": [], 
+  "clientSecret": null, 
+  "dynamicallyRegistered": false, 
+  "clientDescription": null, 
+  "scope": [
+    "launch", 
+    "patient/*.read"
+  ], 
+  "requestObjectSigningAlg": null, 
+  "reuseRefreshToken": true, 
+  "redirectUris": [
+    "http://localhost:9090/apps/fhir-demo/"
+  ], 
+  "refreshTokenValiditySeconds": null, 
+  "idTokenEncryptedResponseEnc": null, 
+  "idTokenSignedResponseAlg": null, 
+  "clientUri": null, 
+  "requireAuthTime": null, 
+  "clientId": "newapp", 
+  "requestUris": [], 
+  "logoUri": null, 
+  "applicationType": null, 
+  "tokenEndpointAuthMethod": null, 
+  "jwksUri": null, 
+  "clientName": "FHIR Demo"
+}

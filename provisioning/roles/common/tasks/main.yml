@@ -15,6 +15,7 @@
          - python-psycopg2
          - python-jinja2
          - python-httplib2
+         - python-requests
          - python-pycurl
 
 - name: create group
@@ -35,7 +36,6 @@
 - name: upgrade server packages
   apt: upgrade=full
   
-
 - name: automatically select the Oracle License
   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 
