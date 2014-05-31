@@ -15,3 +15,11 @@ server {
     ssl_certificate_key /etc/nginx/ssl/apps.key;
 {% endif %}
 }
+
+{% if app_server_secure_http %}
+server {
+    server_name {{app_server_host}};
+    rewrite ^       https://{{app_server_host}}$request_uri? permanent;
+    listen 80;
+} 
+{% endif %}

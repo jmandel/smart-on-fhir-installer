@@ -20,6 +20,9 @@ script
        -Dldap.server="{{ldap_server_uri}}" \
        -Dldap.url="{{ldap_server_uri}}" \
        -Dldap.base="ou=People,{{ldap_server_base}}" \
-       -jar jetty-runner.jar --host localhost --port 4000 \
+       -Djetty.port="4000" \
+       -Djetty.host="localhost" \
+       -jar jetty-runner.jar \
+       --config {{install_dir}}/jetty.xml \
        {{auth_server_war}}
 end script

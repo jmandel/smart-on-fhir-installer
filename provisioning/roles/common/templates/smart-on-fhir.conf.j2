@@ -22,6 +22,9 @@ env JAVA_HOME={{java_home_dir}}
 script
     chdir {{install_dir}}/smart-on-fhir/target
     java \
-       -jar {{install_dir}}/jetty-runner.jar --host localhost --port 3000 \
+       -Djetty.port="3000" \
+       -Djetty.host="localhost" \
+       -jar {{install_dir}}/jetty-runner.jar \
+       --config {{install_dir}}/jetty.xml \
        fhir-0.1.war
 end script
