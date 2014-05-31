@@ -17,7 +17,21 @@
   tags: [auth]
   when: auth_checkout.changed
   service: name=auth state=stopped
-  
+
+# TODO should probably configure the data-context in the overlay project 
+# instead of configuring on-the-floy here. (When the overlay is working.)
+- name: disable memory-hsql
+  lineinfile:
+    dest={{auth_server_data_context}}
+    regexp="hsqldb:mem"
+    line="<!-- <property name="url" value="jdbc:hsqldb:mem:oic;sql.syntax_mys=true" /> -->"
+
+- name: enable file-hsql
+  lineinfile:
+    dest={{auth_server_data_context}}
+   regexp="hsqldb:file"
+   line="<property name="url" value="jdbc:hsqldb:file:{{auth_server_db_file}};sql.syntax_mys=true" />" 
+
 - name: build auth server
   tags: [auth]
   sudo_user: "{{username}}"
