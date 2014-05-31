@@ -41,7 +41,7 @@
 
 - name: drop postgres db
   sudo_user: postgres
-  when: sof_checkout.changed
+  when: sof_checkout.changed and (not fhir_server_preserve_db)
   postgresql_db: state=absent name=fhir
           
 - name: create postgres db

@@ -18,6 +18,7 @@ auth_server_branch: "smart-launch"
 auth_server_war: ldap-openid-connect-server/openid-connect-server-webapp/target/openid-connect-server-webapp.war
 auth_server_data_context: "{{install_dir}}/ldap-openid-connect-server/openid-connect-server-webapp/src/main/webapp/WEB-INF/data-context.xml"
 auth_server_db_file: "{{install_dir}}/auth_server_db.hsql"
+auth_server_preserve_db: false
 fhir_server_secure_http: false
 fhir_server_host: "localhost"
 fhir_server_port: 9080
@@ -30,6 +31,7 @@ fhir_server_introspection_uri: "{{auth_server_base}}/introspect?token={token}"
 fhir_server_register_uri: "{{auth_server_base}}/register"
 fhir_server_authorize_uri: "{{auth_server_base}}/authorize"
 fhir_server_token_uri: "{{auth_server_base}}/token"
+fhir_server_preserve_db: false
 app_server_secure_http: false
 app_server_host: "localhost"
 app_server_port: 9090

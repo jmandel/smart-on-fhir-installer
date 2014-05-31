@@ -18,6 +18,11 @@
   when: auth_checkout.changed
   service: name=auth state=stopped
 
+- name: clear auth server data
+  tags: [auth]
+  file: path={{auth_server_db_file}} state=absent
+  when: not auth_server_preserve_db
+
 # TODO should probably configure the data-context in the overlay project 
 # instead of configuring on-the-floy here. (When the overlay is working.)
 - name: disable memory-hsql

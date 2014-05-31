@@ -7,7 +7,6 @@
 
 - name: build sample patients
   sudo_user: "{{username}}"
-  when: sample_patients_checkout.changed
   shell: chdir={{install_dir}}/smart_sample_patients/bin
          python generate.py --write-fhir ../generated-data
 
@@ -18,7 +17,9 @@
 
 - name: load sample patients
   tags: [pts]
-  when: sof_checkout.changed or sample_patients_checkout.changed
+  when: 
+    sof_checkout.changed or sample_patients_checkout.changed
+    and (not fhir_server_preserve_db)
   shell: "chdir={{install_dir}}/smart_sample_patients/generated-data/
          curl
            -u {{fhir_server_username}}:{{fhir_server_password}}
