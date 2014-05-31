@@ -1,9 +1,9 @@
 - name: configure auth server service
   tags: [auth]
-  template: src=oidc.conf.j2
-            dest=/etc/init/oidc.conf
+  template: src=auth.conf.j2
+            dest=/etc/init/auth.conf
             owner=root group=root mode=0644
-  register: oidc_service
+  register: auth_service
 
 - name: checkout auth server
   tags: [auth]
@@ -11,7 +11,7 @@
   git: repo={{auth_server_repo}}
        version={{auth_server_branch}}
        dest={{install_dir}}/openid-connect-server
-  register: oidc_checkout
+  register: auth_checkout
   
 - name: checkout auth ldap server
   tags: [auth]
@@ -19,17 +19,17 @@
   git: repo={{auth_ldap_server_repo}}
        version={{auth_ldap_server_branch}}
        dest={{install_dir}}/ldap-openid-connect-server
-  register: oidc_ldap_checkout
+  register: auth_ldap_checkout
   
 - name: stop auth server
   tags: [auth]
-  when: oidc_checkout.changed or oidc_ldap_checkout.changed
+  when: auth_checkout.changed or auth_ldap_checkout.changed
   service: name=oidc state=stopped
   
 - name: build auth server
   tags: [auth]
   sudo_user: "{{username}}"
-  when: oidc_checkout.changed
+  when: auth_checkout.changed
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/openid-connect-server
@@ -38,7 +38,7 @@
 - name: build auth ldap overlay
   tags: [auth]
   sudo_user: "{{username}}"
-  when: oidc_ldap_checkout.changed
+  when: auth_ldap_checkout.changed
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/ldap-openid-connect-server
@@ -46,7 +46,7 @@
 
 - name: restart auth server
   tags: [auth]
-  when: oidc_checkout.changed or oidc_service.changed or oidc_ldap_checkout.changed
+  when: auth_checkout.changed or auth_service.changed or auth_ldap_checkout.changed
   service: name=oidc state=restarted
 
 - name: wait for auth server to become available
@@ -61,7 +61,7 @@
   
 - name: configure nginx (auth server)
   tags: [auth,nginx]
-  template: src=nginx_oidc.j2 dest=/etc/nginx/sites-enabled/oidc owner=root group=root mode=0644
+  template: src=nginx_auth.j2 dest=/etc/nginx/sites-enabled/auth owner=root group=root mode=0644
   notify:
         - restart nginx
 
