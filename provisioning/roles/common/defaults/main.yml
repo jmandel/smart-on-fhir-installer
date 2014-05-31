@@ -13,9 +13,11 @@ auth_server_host: "localhost"
 auth_server_port: 9085
 auth_server_username: client
 auth_server_password: secret
-auth_server_repo: "https://github.com/jmandel/OpenID-Connect-Java-Spring-Server.git"
+auth_server_repo: "https://github.com/smart-on-fhir/OpenID-Connect-Java-Spring-Server.git"
 auth_server_branch: "smart-launch"
-auth_server_war: ldap-openid-connect-server/openid-connect-server-webapp/target/openid-connect-server-webapp.war
+auth_ldap_server_repo: "https://github.com/smart-on-fhir/ldap-openid-connect-server.git"
+auth_ldap_server_branch: "smart-launch"
+auth_server_war: ldap-openid-connect-server/ldap-server-overlay/target/ldap-openid-connect-server.war
 fhir_server_secure_http: false
 fhir_server_host: "localhost"
 fhir_server_port: 9080
@@ -39,7 +41,7 @@ ldap_server_base: "dc=example,dc=com"
 ldap_server_uri: "ldap://{{ldap_server_host}}:389"
 ldap_server_organization: "Example Company"
 ldap_server_admin_password: "sample-password"
-ldap_server_tls_support: true
+ldap_server_tls: false
 sample_patients_repo: "https://github.com/chb/smart_sample_patients.git"
 sample_patients_branch: "fhir"
 

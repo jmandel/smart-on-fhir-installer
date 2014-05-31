@@ -40,7 +40,7 @@
   failed_when: False
            
 - name: install certificate generator
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   environment:
     DEBIAN_FRONTEND: noninteractive
   apt: pkg={{item}} force=yes
@@ -49,34 +49,34 @@
          - ssl-cert
 
 - name: configure certificate authority
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   template: src="ca.info.j2"
             dest="/etc/ssl/ca.info"
          
 - name: generate private key for certificate authority
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   shell: sh -c "certtool --generate-privkey > /etc/ssl/private/cakey.pem"
 
             
 - name: generate self-signed ca certificate
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   shell: certtool --generate-self-signed
                   --load-privkey /etc/ssl/private/cakey.pem
                   --template /etc/ssl/ca.info
                   --outfile /etc/ssl/certs/cacert.pem
 
 - name: configure ldap server certificate
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   template: src="ldap01.info.j2"
             dest="/etc/ssl/ldap01.info"
             
 - name: generate private key for ldap server
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   shell: certtool --generate-privkey --bits 1024
                    --outfile /etc/ssl/private/ldap01_slapd_key.pem
             
 - name: generate ldap server certificate
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   shell: certtool --generate-certificate
                   --load-privkey /etc/ssl/private/ldap01_slapd_key.pem
                   --load-ca-certificate /etc/ssl/certs/cacert.pem
@@ -85,13 +85,13 @@
                   --outfile /etc/ssl/certs/ldap01_slapd_cert.pem
                   
 - name: configure ldap server certificate
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   sudo_user: "{{username}}"
   template: src="certinfo.ldif.j2"
             dest="{{install_dir}}/certinfo.ldif"
             
 - name: configure ldap server tls 
-  when: ldap_server_tls_support
+  when: ldap_server_tls
   shell: ldapmodify
            -Y EXTERNAL -H ldapi:///
            -f {{install_dir}}/certinfo.ldif

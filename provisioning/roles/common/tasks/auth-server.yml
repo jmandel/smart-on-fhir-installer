@@ -10,12 +10,20 @@
   sudo_user: "{{username}}"
   git: repo={{auth_server_repo}}
        version={{auth_server_branch}}
-       dest={{install_dir}}/ldap-openid-connect-server
+       dest={{install_dir}}/openid-connect-server
   register: oidc_checkout
+  
+- name: checkout auth ldap server
+  tags: [auth]
+  sudo_user: "{{username}}"
+  git: repo={{auth_ldap_server_repo}}
+       version={{auth_ldap_server_branch}}
+       dest={{install_dir}}/ldap-openid-connect-server
+  register: oidc_ldap_checkout
   
 - name: stop auth server
   tags: [auth]
-  when: oidc_checkout.changed
+  when: oidc_checkout.changed or oidc_ldap_checkout.changed
   service: name=oidc state=stopped
   
 - name: build auth server
@@ -24,12 +32,21 @@
   when: oidc_checkout.changed
   environment:
     JAVA_HOME: "{{java_home_dir}}"
+  shell: chdir={{install_dir}}/openid-connect-server
+       mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true
+       
+- name: build auth ldap overlay
+  tags: [auth]
+  sudo_user: "{{username}}"
+  when: oidc_ldap_checkout.changed
+  environment:
+    JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/ldap-openid-connect-server
        mvn clean package -DskipTests=true -Dmaven.javadoc.skip=true
 
 - name: restart auth server
   tags: [auth]
-  when: oidc_checkout.changed or oidc_service.changed
+  when: oidc_checkout.changed or oidc_service.changed or oidc_ldap_checkout.changed
   service: name=oidc state=restarted
 
 - name: wait for auth server to become available
