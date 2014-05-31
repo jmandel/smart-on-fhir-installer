@@ -47,7 +47,7 @@
 
 - name: load sample apps
   tags: [apps, load_apps]
-  when: sof_checkout.changed or apps_checkout.changed or oidc_checkout.changed or oidc_service.changed
+  when: sof_checkout.changed or apps_checkout.changed or auth_checkout.changed or auth_service.changed
   uri: 
      url='{{auth_server_base}}/api/clients'
      method=POST
