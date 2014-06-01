@@ -45,15 +45,17 @@ vagrant halt
 ## From a fresh Ubuntu 14.04 machine
 
 ```
-apt-get install curl git python-pycurl python-pip
-pip install ansible==1.6.*
+apt-get update
+apt-get install curl git python-pycurl python-pip apt-get python-yaml python-paramiko python-jinja2
+pip install ansible==1.6
 git clone https://github.com/smart-on-fhir/smart-on-fhir-installer
 cd smart-on-fhir-installer/provisioning
 ```
 
-At this point, you probably want to edit `settings.yml` to suit your needs.
-For example, change `localhost` to some world-routable hostname if that's
-what you need -- and set the app_server public port to 80.
+At this point, you probably want to edit `custom_settings.yml` or pass a
+vars file with settings that suit your needs.  For example, change `localhost`
+to some world-routable hostname if that's what you need -- and set the
+app_server public port to 80.
 
 ```
 ansible-playbook  -c local -i 'localhost,' -vvvv smart-on-fhir-servers.yml 
