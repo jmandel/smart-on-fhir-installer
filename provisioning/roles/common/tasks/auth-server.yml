@@ -29,13 +29,13 @@
   lineinfile:
     dest={{auth_server_data_context}}
     regexp="hsqldb:mem"
-    line="<!-- <property name="url" value="jdbc:hsqldb:mem:oic;sql.syntax_mys=true" /> -->"
+    line='<!-- <property name="url" value="jdbc:hsqldb:mem:oic;sql.syntax_mys=true" /> -->'
 
 - name: enable file-hsql
   lineinfile:
     dest={{auth_server_data_context}}
    regexp="hsqldb:file"
-   line="<property name="url" value="jdbc:hsqldb:file:{{auth_server_db_file}};sql.syntax_mys=true" />" 
+   line='<property name="url" value="jdbc:hsqldb:file:{{auth_server_db_file}};sql.syntax_mys=true" />'
 
 - name: build auth server
   tags: [auth]
