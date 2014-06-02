@@ -1,5 +1,7 @@
 ---
 - hosts: all
   sudo: yes
+  vars_files:
+    - custom_settings.yml
   roles:
     - common

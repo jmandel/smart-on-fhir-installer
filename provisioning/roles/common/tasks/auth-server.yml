@@ -24,8 +24,27 @@
 - name: stop auth server
   tags: [auth]
   when: auth_checkout.changed or auth_ldap_checkout.changed
-  service: name=oidc state=stopped
-  
+  service: name=auth state=stopped
+
+- name: clear auth server data
+  tags: [auth]
+  file: path={{auth_server_db_file}} state=absent
+  when: not auth_server_preserve_db
+
+# TODO should probably configure the data-context in the overlay project 
+# instead of configuring on-the-floy here. (When the overlay is working.)
+- name: disable memory-hsql
+  lineinfile:
+    dest={{auth_server_data_context}}
+    regexp="hsqldb:mem"
+    line='<!-- <property name="url" value="jdbc:hsqldb:mem:oic;sql.syntax_mys=true" /> -->'
+
+- name: enable file-hsql
+  lineinfile:
+    dest={{auth_server_data_context}}
+   regexp="hsqldb:file"
+   line='<property name="url" value="jdbc:hsqldb:file:{{auth_server_db_file}};sql.syntax_mys=true" />'
+
 - name: build auth server
   tags: [auth]
   sudo_user: "{{username}}"
