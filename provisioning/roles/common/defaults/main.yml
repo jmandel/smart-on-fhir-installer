@@ -18,7 +18,7 @@ auth_server_branch: "smart-launch"
 auth_ldap_server_repo: "https://github.com/smart-on-fhir/ldap-openid-connect-server.git"
 auth_ldap_server_branch: "smart-launch"
 auth_server_war: ldap-openid-connect-server/ldap-server-overlay/target/ldap-openid-connect-server.war
-auth_server_data_context: "{{install_dir}}/ldap-openid-connect-server/openid-connect-server-webapp/src/main/webapp/WEB-INF/data-context.xml"
+auth_server_data_context: "{{install_dir}}/openid-connect-server/openid-connect-server-webapp/src/main/webapp/WEB-INF/data-context.xml"
 auth_server_db_file: "{{install_dir}}/auth_server_db.hsql"
 auth_server_preserve_db: false
 fhir_server_secure_http: false
@@ -45,7 +45,7 @@ ldap_server_base: "dc=example,dc=com"
 ldap_server_uri: "ldap://{{ldap_server_host}}:389"
 ldap_server_organization: "Example Company"
 ldap_server_admin_password: "sample-password"
-ldap_server_tls: false
+ldap_server_tls: true
 sample_patients_repo: "https://github.com/chb/smart_sample_patients.git"
 sample_patients_branch: "fhir"
 
