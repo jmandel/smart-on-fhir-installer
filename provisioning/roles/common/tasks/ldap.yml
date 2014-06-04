@@ -57,7 +57,7 @@
 - name: create ldap ssl certificates directory
   tags: [ldap]
   when: ldap_server_tls
-  file: path=/etc/ldap/ssl state=directory owner=root group=ssl-cert mode=0640
+  file: path=/etc/ldap/ssl state=directory owner=root group=ssl-cert mode=0755
 
 - name: configure certificate authority
   tags: [ldap]
