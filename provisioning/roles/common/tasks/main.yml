@@ -77,7 +77,7 @@
 - name: copy custom ssl certificates
   tags: [general]
   when: (auth_server_secure_http or fhir_server_secure_http or app_server_secure_http) and use_custom_ssl_certificates
-  copy: src={{custom_ssl_certificates_path|default('certificates')}}/
+  copy: src={{custom_ssl_certificates_path|default('sample-certificates')}}/
         dest=/etc/nginx/ssl
  
 - include: smart-on-fhir.yml
