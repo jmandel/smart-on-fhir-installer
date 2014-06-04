@@ -97,6 +97,12 @@
            -f {{install_dir}}/certinfo.ldif
 #  failed_when: False
 
+- name: disable ldap server tls 
+  when: not ldap_server_tls
+  shell: ldapmodify
+           -Y EXTERNAL -H ldapi:///
+           -f /vagrant/provisioning/roles/common/files/certinfo-delete.ldif
+
 - name: add openldap user to ssl-cert group
   user: name=openldap groups=ssl-cert
 
