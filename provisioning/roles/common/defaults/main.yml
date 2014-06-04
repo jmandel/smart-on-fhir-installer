@@ -45,7 +45,7 @@ ldap_server_base: "dc=example,dc=com"
 ldap_server_uri: "ldap://{{ldap_server_host}}:389"
 ldap_server_organization: "Example Company"
 ldap_server_admin_password: "sample-password"
-ldap_server_tls: false
+ldap_server_tls: true
 sample_patients_repo: "https://github.com/chb/smart_sample_patients.git"
 sample_patients_branch: "fhir"
 
