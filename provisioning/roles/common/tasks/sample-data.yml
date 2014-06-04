@@ -1,4 +1,5 @@
 - name: checkout sample patients
+  tags: [patients]
   sudo_user: "{{username}}"
   git: repo={{sample_patients_repo}}
        version={{sample_patients_branch}}
@@ -6,17 +7,18 @@
   register: sample_patients_checkout
 
 - name: build sample patients
+  tags: [patients]
   sudo_user: "{{username}}"
   shell: chdir={{install_dir}}/smart_sample_patients/bin
          python generate.py --write-fhir ../generated-data
 
-- name: list 10 sample patients
-  tags: [pts]
-  shell: ls {{install_dir}}/smart_sample_patients/generated-data/*.xml | head -n 10
+- name: list sample patients
+  tags: [patients, load_patients]
+  shell: ls {{install_dir}}/smart_sample_patients/generated-data/*.xml | head -n {{sample_patients_limit}}
   register: sample_patient_files
 
 - name: load sample patients
-  tags: [pts]
+  tags: [patients, load_patients]
   when: 
     sof_checkout.changed or sample_patients_checkout.changed
     and (not fhir_server_preserve_db)
@@ -60,3 +62,11 @@
          '{{auth_server_password}}'
   with_flattened: 
     - "{{ sample_apps.stdout | to_json }}"
+
+- name: configure nginx (fhir-starter apps)
+  tags: [apps,nginx]
+  template: src=nginx_apps.j2 dest=/etc/nginx/sites-enabled/apps owner=root group=root mode=0644
+  notify:
+        - restart nginx
+
+- meta: flush_handlers

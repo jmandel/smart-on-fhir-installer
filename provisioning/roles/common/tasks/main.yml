@@ -1,8 +1,10 @@
 - name: check host:port uniqueness
+  tags: [general]
   fail: msg="each server must have unique host:port assigned"
   when: "'{{auth_server_host}}:{{auth_server_port}}' == '{{fhir_server_host}}:{{fhir_server_port}}' or '{{auth_server_host}}:{{auth_server_port}}' == '{{app_server_host}}:{{app_server_port}}' or '{{fhir_server_host}}:{{fhir_server_port}}' == '{{app_server_host}}:{{app_server_port}}'"
 
 - name: install prerequisite packages
+  tags: [general]
   environment:
     DEBIAN_FRONTEND: noninteractive
   apt: pkg={{item}} force=yes
@@ -19,55 +21,66 @@
          - python-pycurl
 
 - name: create group
+  tags: [general]
   group: name="{{username}}"
   
 - name: create user
+  tags: [general]
   user: name="{{username}}" password="{{userpass}}" update_password="on_create"
         group="{{username}}" groups=sudo
         shell=/bin/bash
 
 - name: add PPA repos
+  tags: [general]
   apt_repository: repo={{item}}
   with_items: ['ppa:webupd8team/java','ppa:nginx/stable']
 
-- name: update aptitude cache 
+- name: update aptitude cache
+  tags: [general]
   apt: update_cache=yes
   
 - name: upgrade server packages
+  tags: [general]
   apt: upgrade=full
   
 - name: automatically select the Oracle License
+  tags: [general]
   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 
 - name: install Oracle Java
+  tags: [general]
   apt: pkg=oracle-java7-installer
 
 - name: set global JAVA_HOME
+  tags: [general]
   lineinfile: dest=/etc/environment
               state=present
               regexp='^JAVA_HOME'
               line='JAVA_HOME={{java_home_dir}}'
 
 - name: download jetty-runner
-  tags: [apps]
+  tags: [apps, general]
   sudo_user: "{{username}}"
   get_url: 
           url={{jetty_download_url}}
           dest={{install_dir}}/jetty-runner.jar
 
 - name: config jetty-runner
+  tags: [apps, general]
   copy: src=jetty.xml dest={{install_dir}}/jetty.xml
 
 - name: create ssl certificates directory
+  tags: [general]
   when: auth_server_secure_http or fhir_server_secure_http or app_server_secure_http
   file: path=/etc/nginx/ssl state=directory owner=root group=root mode=0640
   
 - name: copy custom ssl certificates
+  tags: [general]
   when: (auth_server_secure_http or fhir_server_secure_http or app_server_secure_http) and use_custom_ssl_certificates
   copy: src={{custom_ssl_certificates_path|default('certificates')}}/
         dest=/etc/nginx/ssl
  
-- include: ldap.yml
 - include: smart-on-fhir.yml
+- include: ldap.yml
 - include: auth-server.yml
 - include: sample-data.yml

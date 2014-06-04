@@ -24,17 +24,17 @@ Now visit in a web browser on your local ("host") machine:
  * `http://localhost:9085`  for an OAuth2 authorization server
  * `http://localhost:9090`  for a SMART apps server
 
-The OpenID Connect authentication server should be at `http://localhost:9085`. It uses
-the OpenLDAP server running on the virtual machine. The two sample accounts are `demo/demo` and
-`admin/password` by default.
+The authorization server uses the OpenLDAP server running on the virtual machine. 
+The two sample accounts are `demo/demo` and `admin/password` by default. You should change
+these for production environments. You can connect to the LDAP server on `localhost:1389`.
 
-You can poke around by doing:
+You can poke around the virtual machine by doing:
 
 ```
 vagrant ssh
 ```
 
-And when you're done you can shut it down with:
+And when you're done you can shut the virtual machine down with:
 
 ```
 vagrant halt
@@ -42,7 +42,7 @@ vagrant halt
 
 ---
 
-## From a fresh Ubuntu 14.04 machine
+## Building SMART-on-FHIR on fresh Ubuntu 14.04 machine (without Vagrant)
 
 ```
 apt-get update

@@ -1,4 +1,5 @@
 - name: automatically select the OpenLDAP configuration settings
+  tags: [ldap]
   shell: echo "slapd {{item}}" | sudo debconf-set-selections
   with_items:
          - slapd/password1 password {{ldap_server_admin_password}}
@@ -12,6 +13,7 @@
          - slapd/backend boolean HDB
 
 - name: install ldap apt packages
+  tags: [ldap]
   environment:
     DEBIAN_FRONTEND: noninteractive
   apt: pkg={{item}} force=yes
@@ -20,17 +22,20 @@
          - ldap-utils
 
 - name: configure LDAP client tool
+  tags: [ldap]
   template: src="ldap.conf.j2"
             dest="/etc/ldap/ldap.conf"
             owner=root group=root mode=0644
   register: ldap_checkout
 
 - name: generate sample LDAP directory
+  tags: [ldap]
   sudo_user: "{{username}}"
   template: src="ldap_content.ldif.j2"
             dest="{{install_dir}}/ldap_content.ldif"
 
 - name: load sample LDAP directory
+  tags: [ldap]
   when: ldap_checkout.changed
   shell: chdir={{install_dir}}
          ldapadd
@@ -40,6 +45,7 @@
   failed_when: False
            
 - name: install certificate generator
+  tags: [ldap]
   when: ldap_server_tls
   environment:
     DEBIAN_FRONTEND: noninteractive
@@ -49,16 +55,19 @@
          - ssl-cert
 
 - name: configure certificate authority
+  tags: [ldap]
   when: ldap_server_tls
   template: src="ca.info.j2"
             dest="/etc/ssl/ca.info"
          
 - name: generate private key for certificate authority
+  tags: [ldap]
   when: ldap_server_tls
   shell: sh -c "certtool --generate-privkey > /etc/ssl/private/cakey.pem"
 
             
 - name: generate self-signed ca certificate
+  tags: [ldap]
   when: ldap_server_tls
   shell: certtool --generate-self-signed
                   --load-privkey /etc/ssl/private/cakey.pem
@@ -66,16 +75,19 @@
                   --outfile /etc/ssl/certs/cacert.pem
 
 - name: configure ldap server certificate
+  tags: [ldap]
   when: ldap_server_tls
   template: src="ldap01.info.j2"
             dest="/etc/ssl/ldap01.info"
             
 - name: generate private key for ldap server
+  tags: [ldap]
   when: ldap_server_tls
   shell: certtool --generate-privkey --bits 1024
                    --outfile /etc/ssl/private/ldap01_slapd_key.pem
             
 - name: generate ldap server certificate
+  tags: [ldap]
   when: ldap_server_tls
   shell: certtool --generate-certificate
                   --load-privkey /etc/ssl/private/ldap01_slapd_key.pem
@@ -85,40 +97,48 @@
                   --outfile /etc/ssl/certs/ldap01_slapd_cert.pem
                   
 - name: configure ldap server certificate
+  tags: [ldap]
   when: ldap_server_tls
   sudo_user: "{{username}}"
-  template: src="certinfo.ldif.j2"
-            dest="{{install_dir}}/certinfo.ldif"
+  template: src="ldap_tls_config.ldif.j2"
+            dest="{{install_dir}}/ldap_tls_config.ldif"
             
 - name: configure ldap server tls 
+  tags: [ldap]
   when: ldap_server_tls
   shell: ldapmodify
            -Y EXTERNAL -H ldapi:///
-           -f {{install_dir}}/certinfo.ldif
+           -f {{install_dir}}/ldap_tls_config.ldif
 #  failed_when: False
 
 - name: disable ldap server tls 
+  tags: [ldap]
   when: not ldap_server_tls
   shell: ldapmodify
            -Y EXTERNAL -H ldapi:///
-           -f /vagrant/provisioning/roles/common/files/certinfo-delete.ldif
+           -f /vagrant/provisioning/roles/common/files/ldap_disable_auth.ldif
 
 - name: add openldap user to ssl-cert group
+  tags: [ldap]
   user: name=openldap groups=ssl-cert
 
 - name: set ldap private key permissions
+  tags: [ldap]
   file: path=/etc/ssl/private/{{item}} group=ssl-cert mode=640
   with_items:
       - ldap01_slapd_key.pem
       - cakey.pem
 
 - name: restart ldap server
+  tags: [ldap]
   service: name=slapd state=restarted
   
 - name: clear truststore
+  tags: [ldap]
   file: name={{install_dir}}/keystore state=absent
   
 - name: import ca certificate in truststore
+  tags: [ldap]
   sudo_user: "{{username}}"
   when: ldap_server_tls
   shell: /bin/echo -e "{{keystore_password}}\n{{keystore_password}}\nyes\n" | keytool
@@ -126,3 +146,4 @@
            -file /etc/ssl/certs/cacert.pem
            -keystore {{install_dir}}/keystore
   failed_when: False
+  

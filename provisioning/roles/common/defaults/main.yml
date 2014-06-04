@@ -1,14 +1,62 @@
 ---
+
+# *** Main configuration file for the SMART-on-FHIR Installer ***
+
+# To customize the SMART-on-FHIR stack, you can either edit the settings directly in
+# this file or set up custom settings overrides (such as custom_settings.yml)
+
+# The user accunt that will host the servers. If a user account of this name
+# already exists on the system, the installer will not alter its credentials or
+# authentication mechanism
 username: fhir
 userpass: secretpass
 install_dir: "/home/{{username}}"
-java_home_dir: "/usr/lib/jvm/java-7-oracle"
-keystore_password: "changeme"
+
+# Settigs for Jetty and Oracle Java. You probably won't have to alter these
+# unles you are switching to a different version of Jetty or Java
 jetty_download_url: "http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.0.M0/jetty-runner-9.1.0.M0.jar"
+java_home_dir: "/usr/lib/jvm/java-7-oracle"
+
+# Database user configuration (used by the SMART-on-FHIR server)
 postgres_user: "fhir"
 postgres_password: "fhir"
+
+# Password for the Java keystore used by the authorization server (please change)
+keystore_password: "changeme"
+
+# When setting up SSL security for the various services, these settings will allow you to 
+# specify your own certificates instead of using self-signed certificates.
+# See files/sample-certificates for the names of the certificate files expected by the script
 use_custom_ssl_certificates: false
 #custom_ssl_certificates_path: /example/local/path
+
+# General settings for the SMART-on-FHIR server (override as needed)
+fhir_server_secure_http: false
+fhir_server_host: "localhost"
+fhir_server_port: 9080
+fhir_server_username: client
+fhir_server_password: secret
+fhir_server_repo: "https://github.com/smart-on-fhir/smart-on-fhir.git"
+fhir_server_branch: "smart-launch"
+
+# Specific settings for the SMART-on-FHIR server authorization behavior
+fhir_server_use_auth: true
+fhir_server_introspection_uri: "{{auth_server_base}}/introspect?token={token}"
+fhir_server_register_uri: "{{auth_server_base}}/register"
+fhir_server_authorize_uri: "{{auth_server_base}}/authorize"
+fhir_server_token_uri: "{{auth_server_base}}/token"
+
+# When set to true Ansible will not reset the SMART-on-FHIR database
+fhir_server_preserve_db: false
+
+# General settings for the FHIR-Starter application server
+app_server_secure_http: false
+app_server_host: "localhost"
+app_server_port: 9090
+app_server_repo: "https://github.com/smart-on-fhir/fhir-starter.git"
+app_server_branch: "smart-launch"
+
+# General settings for the authorization server
 auth_server_secure_http: false
 auth_server_host: "localhost"
 auth_server_port: 9085
@@ -21,36 +69,29 @@ auth_ldap_server_branch: "smart-launch"
 auth_server_war: ldap-openid-connect-server/ldap-server-overlay/target/ldap-openid-connect-server.war
 auth_server_data_context: "{{install_dir}}/openid-connect-server/openid-connect-server-webapp/src/main/webapp/WEB-INF/data-context.xml"
 auth_server_db_file: "{{install_dir}}/auth_server_db.hsql"
+
+# When set to true Ansible will not reset the authorization server database
 auth_server_preserve_db: false
-fhir_server_secure_http: false
-fhir_server_host: "localhost"
-fhir_server_port: 9080
-fhir_server_username: client
-fhir_server_password: secret
-fhir_server_repo: "https://github.com/smart-on-fhir/smart-on-fhir.git"
-fhir_server_branch: "smart-launch"
-fhir_server_use_auth: true
-fhir_server_introspection_uri: "{{auth_server_base}}/introspect?token={token}"
-fhir_server_register_uri: "{{auth_server_base}}/register"
-fhir_server_authorize_uri: "{{auth_server_base}}/authorize"
-fhir_server_token_uri: "{{auth_server_base}}/token"
-fhir_server_preserve_db: false
-app_server_secure_http: false
-app_server_host: "localhost"
-app_server_port: 9090
-app_server_repo: "https://github.com/smart-on-fhir/fhir-starter.git"
-app_server_branch: "smart-launch"
+
+# LDAP server high-level configuration
 ldap_server_domain: "example.com"
 ldap_server_host: "localhost"
 ldap_server_base: "dc=example,dc=com"
 ldap_server_uri: "ldap://{{ldap_server_host}}:389"
 ldap_server_organization: "Example Company"
 ldap_server_admin_password: "sample-password"
+
+# When set to true will force TLS and disalow anonymous binds for the LDAP server
 ldap_server_tls: true
+
+# General settings for the sample patients set
 sample_patients_repo: "https://github.com/chb/smart_sample_patients.git"
 sample_patients_branch: "fhir"
 
-# Self-signed SSL certificates settings
+# choose how many sample patients to load in the server or set to 9999 for all of them
+sample_patients_limit: 10
+
+# Self-signed SSL certificates settings (if generating self-signed certificates)
 auth_server_ssl_country: US
 auth_server_ssl_province: MA
 auth_server_ssl_locality: Boston
@@ -76,6 +117,8 @@ ldap_server_ssl_organization: "{{auth_server_ssl_organization}}"
 ldap_server_ssl_division: "{{auth_server_ssl_division}}"
 ldap_server_ssl_email: "{{auth_server_ssl_email}}"
 
+# These are convenience variables with the generated base paths of the servers. You
+# most likely will never have to touch these.
 auth_server_base: "{{
     'https' if auth_server_secure_http else 'http' }}://{{auth_server_host}}{{(
     ':'+auth_server_port|string) if auth_server_port|int not in (80,443) else ''}}"

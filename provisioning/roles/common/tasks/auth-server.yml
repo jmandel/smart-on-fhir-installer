@@ -32,14 +32,16 @@
   when: not auth_server_preserve_db
 
 # TODO should probably configure the data-context in the overlay project 
-# instead of configuring on-the-floy here. (When the overlay is working.)
+# instead of configuring on-the-fly here. (When the overlay is working.)
 - name: disable memory-hsql
+  tags: [auth]
   lineinfile:
     dest={{auth_server_data_context}}
     regexp="hsqldb:mem"
     line='<!-- <property name="url" value="jdbc:hsqldb:mem:oic;sql.syntax_mys=true" /> -->'
 
 - name: enable file-hsql
+  tags: [auth]
   lineinfile:
     dest={{auth_server_data_context}}
    regexp="hsqldb:file"
