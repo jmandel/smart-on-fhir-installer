@@ -22,6 +22,10 @@ script
        -Dldap.base="ou=People,{{ldap_server_base}}" \
        -Djetty.port="4000" \
        -Djetty.host="localhost" \
+{% if ldap_server_tls %}
+       -Djavax.net.ssl.trustStore="{{install_dir}}/keystore" \
+       -Djavax.net.ssl.trustStorePassword="{{keystore_password}}" \
+{% endif %}
        -jar jetty-runner.jar \
        --config {{install_dir}}/jetty.xml \
        {{auth_server_war}}

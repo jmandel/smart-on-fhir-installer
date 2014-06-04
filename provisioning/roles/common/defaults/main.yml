@@ -3,6 +3,7 @@ username: fhir
 userpass: secretpass
 install_dir: "/home/{{username}}"
 java_home_dir: "/usr/lib/jvm/java-7-oracle"
+keystore_password: "changeme"
 jetty_download_url: "http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.1.0.M0/jetty-runner-9.1.0.M0.jar"
 postgres_user: "fhir"
 postgres_password: "fhir"

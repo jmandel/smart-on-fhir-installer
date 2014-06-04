@@ -114,3 +114,15 @@
 
 - name: restart ldap server
   service: name=slapd state=restarted
+  
+- name: clear truststore
+  file: name={{install_dir}}/keystore state=absent
+  
+- name: import ca certificate in truststore
+  sudo_user: "{{username}}"
+  when: ldap_server_tls
+  shell: /bin/echo -e "{{keystore_password}}\n{{keystore_password}}\nyes\n" | keytool
+           -importcert -trustcacerts
+           -file /etc/ssl/certs/cacert.pem
+           -keystore {{install_dir}}/keystore
+  failed_when: False
