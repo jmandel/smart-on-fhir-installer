@@ -68,16 +68,16 @@
 - name: generate private key for certificate authority
   tags: [ldap]
   when: ldap_server_tls and not use_custom_ssl_certificates
-  shell: sh -c "certtool --generate-privkey > /etc/ldap/ssl/ldap_cakey.pem"
+  shell: sh -c "certtool --generate-privkey > /etc/ldap/ssl/ldap_ca_key.pem"
 
             
 - name: generate self-signed ca certificate
   tags: [ldap]
   when: ldap_server_tls and not use_custom_ssl_certificates
   shell: certtool --generate-self-signed
-                  --load-privkey /etc/ldap/ssl/ldap_cakey.pem
+                  --load-privkey /etc/ldap/ssl/ldap_ca_key.pem
                   --template /etc/ldap/ssl/ldap_ca.info
-                  --outfile /etc/ldap/ssl/ldap_cacert.pem
+                  --outfile /etc/ldap/ssl/ldap_ca_cert.pem
 
 - name: configure ldap server certificate
   tags: [ldap]
@@ -96,8 +96,8 @@
   when: ldap_server_tls and not use_custom_ssl_certificates
   shell: certtool --generate-certificate
                   --load-privkey /etc/ldap/ssl/ldap01_slapd_key.pem
-                  --load-ca-certificate /etc/ldap/ssl/ldap_cacert.pem
-                  --load-ca-privkey /etc/ldap/ssl/ldap_cakey.pem
+                  --load-ca-certificate /etc/ldap/ssl/ldap_ca_cert.pem
+                  --load-ca-privkey /etc/ldap/ssl/ldap_ca_key.pem
                   --template /etc/ldap/ssl/ldap01.info
                   --outfile /etc/ldap/ssl/ldap01_slapd_cert.pem
                   
@@ -131,7 +131,7 @@
   file: path=/etc/ldap/ssl/{{item}} group=ssl-cert mode=640
   with_items:
       - ldap01_slapd_key.pem
-      - ldap_cakey.pem
+      - ldap_ca_key.pem
 
 - name: restart ldap server
   tags: [ldap]
@@ -147,7 +147,7 @@
   when: ldap_server_tls
   shell: /bin/echo -e "{{keystore_password}}\n{{keystore_password}}\nyes\n" | keytool
            -importcert -trustcacerts
-           -file /etc/ldap/ssl/ldap_cacert.pem
+           -file /etc/ldap/ssl/ldap_ca_cert.pem
            -keystore {{install_dir}}/keystore
   failed_when: False
   
