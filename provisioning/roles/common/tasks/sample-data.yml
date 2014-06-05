@@ -67,7 +67,7 @@
   tags: [apps]
   when: app_server_secure_http and not use_custom_ssl_certificates
   shell: creates=/etc/nginx/ssl/apps.crt
-         echo -e "{{app_server_ssl_country}}\n{{app_server_ssl_province}}\n{{app_server_ssl_locality}}\n{{app_server_ssl_organization}}\n{{app_server_ssl_division}}\n{{app_server_host}}\n{{app_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/apps.key -out /etc/nginx/ssl/apps.crt
+         /bin/echo -e "{{app_server_ssl_country}}\n{{app_server_ssl_province}}\n{{app_server_ssl_locality}}\n{{app_server_ssl_organization}}\n{{app_server_ssl_division}}\n{{app_server_host}}\n{{app_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/apps.key -out /etc/nginx/ssl/apps.crt
 
 - name: configure nginx (fhir-starter apps)
   tags: [apps,nginx]

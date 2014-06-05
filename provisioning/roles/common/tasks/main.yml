@@ -45,7 +45,7 @@
   
 - name: automatically select the Oracle License
   tags: [general]
-  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+  shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 
 - name: install Oracle Java
   tags: [general]

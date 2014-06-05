@@ -1,6 +1,6 @@
 - name: automatically select the OpenLDAP configuration settings
   tags: [ldap]
-  shell: echo "slapd {{item}}" | sudo debconf-set-selections
+  shell: /bin/echo "slapd {{item}}" | sudo debconf-set-selections
   with_items:
          - slapd/password1 password {{ldap_server_admin_password}}
          - slapd/password2 password {{ldap_server_admin_password}}
