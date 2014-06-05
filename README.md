@@ -65,7 +65,9 @@ ansible-playbook  -c local -i 'localhost,' -vvvv smart-on-fhir-servers.yml
 
 ---
 
-*Note:* While, by default, the install process will not enable SSL, 
+## Notes
+
+While, by default, the install process will not enable SSL, 
 the script can be configured to generate self-signed SSL certificates for the servers
 and enable secure HTTP. You can inject your own sertificates in the build process too. Should you choose
 to try the self-signed certificates, please be aware that you will get a number of trust warning in your
