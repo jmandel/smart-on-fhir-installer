@@ -75,10 +75,19 @@
   wait_for: port=4000
 
 - name: generate self-signed ssl certificate (auth server)
-  tags: [auth,nginx]
+  tags: [auth]
   when: auth_server_secure_http and not use_custom_ssl_certificates
   shell: creates=/etc/nginx/ssl/auth.crt
          /bin/echo -e "{{auth_server_ssl_country}}\n{{auth_server_ssl_province}}\n{{auth_server_ssl_locality}}\n{{auth_server_ssl_organization}}\n{{auth_server_ssl_division}}\n{{auth_server_host}}\n{{auth_server_ssl_email}}\n" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/auth.key -out /etc/nginx/ssl/auth.crt
+         
+- name: import auth server certificate in truststore
+  tags: [auth]
+  when: auth_server_secure_http and not use_custom_ssl_certificates
+  shell: /bin/echo -e "{{keystore_password}}\nyes\n" | keytool
+           -importcert -trustcacerts
+           -alias auth
+           -file /etc/nginx/ssl/auth.crt
+           -keystore {{install_dir}}/keystore
   
 - name: configure nginx (auth server)
   tags: [auth,nginx]

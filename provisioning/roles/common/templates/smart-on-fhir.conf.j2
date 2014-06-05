@@ -24,6 +24,10 @@ script
     java \
        -Djetty.port="3000" \
        -Djetty.host="localhost" \
+{% if auth_server_secure_http and not use_custom_ssl_certificates %}
+       -Djavax.net.ssl.trustStore="{{install_dir}}/keystore" \
+       -Djavax.net.ssl.trustStorePassword="{{keystore_password}}" \
+{% endif %}
        -jar {{install_dir}}/jetty-runner.jar \
        --config {{install_dir}}/jetty.xml \
        fhir-0.1.war

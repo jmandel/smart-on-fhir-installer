@@ -137,17 +137,22 @@
   tags: [ldap]
   service: name=slapd state=restarted
   
-- name: clear truststore
-  tags: [ldap]
-  file: name={{install_dir}}/keystore state=absent
-  
-- name: import ca certificate in truststore
+- name: import ldap ca certificate in truststore
   tags: [ldap]
   sudo_user: "{{username}}"
-  when: ldap_server_tls
-  shell: /bin/echo -e "{{keystore_password}}\n{{keystore_password}}\nyes\n" | keytool
+  when: ldap_server_tls and not use_custom_ssl_certificates
+  shell: /bin/echo -e "{{keystore_password}}\nyes\n" | keytool
            -importcert -trustcacerts
            -file /etc/ldap/ssl/ldap_ca_cert.pem
            -keystore {{install_dir}}/keystore
   failed_when: False
+  
+- name: import ldap certificate in truststore
+  tags: [ldap]
+  when: ldap_server_tls and use_custom_ssl_certificates
+  shell: /bin/echo -e "{{keystore_password}}\nyes\n" | keytool
+           -importcert -trustcacerts
+           -alias ldap
+           -file /etc/ldap/ssl/ldap01_slapd_cert.pem
+           -keystore {{install_dir}}/keystore
   
