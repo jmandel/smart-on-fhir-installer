@@ -121,6 +121,7 @@
   shell: ldapmodify
            -Y EXTERNAL -H ldapi:///
            -f /vagrant/provisioning/roles/common/files/ldap_disable_auth.ldif
+  failed_when: False
 
 - name: add openldap user to ssl-cert group
   tags: [ldap]
