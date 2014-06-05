@@ -50,7 +50,7 @@ apt-get install curl git python-pycurl python-pip python-yaml python-paramiko py
 pip install ansible==1.6
 git clone https://github.com/smart-on-fhir/smart-on-fhir-installer
 cd smart-on-fhir-installer
-ln -s . /vagrant
+ln -s `pwd` /vagrant
 cd provisioning
 ```
 
