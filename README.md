@@ -62,3 +62,13 @@ app_server public port to 80.
 ```
 ansible-playbook  -c local -i 'localhost,' -vvvv smart-on-fhir-servers.yml 
 ```
+
+---
+
+*Note:* While, by default, the install process will not enable SSL, 
+the script can be configured to generate self-signed SSL certificates for the servers
+and enable secure HTTP. You can inject your own sertificates in the build process too. Should you choose
+to try the self-signed certificates, please be aware that you will get a number of trust warning in your
+web browser when you try to run the apps server. These can be resolved on a client-by-client basis
+by adding certificate exceptions in your browser. Before you even try the apps, you should probably load the
+API server and add the self-signed certificate to your browser's security exceptions.
