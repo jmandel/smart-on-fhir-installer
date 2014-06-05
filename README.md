@@ -46,7 +46,7 @@ vagrant halt
 
 ```
 apt-get update
-apt-get install curl git python-pycurl python-pip apt-get python-yaml python-paramiko python-jinja2
+apt-get install curl git python-pycurl python-pip python-yaml python-paramiko python-jinja2
 pip install ansible==1.6
 git clone https://github.com/smart-on-fhir/smart-on-fhir-installer
 cd smart-on-fhir-installer/provisioning
