@@ -55,11 +55,31 @@
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/openid-connect-server
        mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true
+
+- name: reset user-context.xml
+  tags: [auth]
+  sudo_user: "{{username}}"
+  shell: chdir={{install_dir}}/ldap-openid-connect-server
+       git checkout -- ldap-server-overlay/src/main/webapp/WEB-INF/user-context.xml
        
+- name: configure auth ldap overlay for no-tls authentication 1 (if needed)
+  tags: [auth]
+  when: not ldap_server_tls
+  lineinfile: dest={{install_dir}}/ldap-openid-connect-server/ldap-server-overlay/src/main/webapp/WEB-INF/user-context.xml
+              state=absent
+              regexp='authenticationStrategy'
+
+- name: configure auth ldap overlay for no-tls authentication 2 (if needed)
+  tags: [auth]
+  when: not ldap_server_tls
+  lineinfile: dest={{install_dir}}/ldap-openid-connect-server/ldap-server-overlay/src/main/webapp/WEB-INF/user-context.xml
+              state=absent
+              regexp='authenticationSource'
+
 - name: build auth ldap overlay
   tags: [auth]
   sudo_user: "{{username}}"
-  when: auth_ldap_checkout.changed
+#  when: auth_ldap_checkout.changed or 
   environment:
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/ldap-openid-connect-server
@@ -67,7 +87,7 @@
 
 - name: restart auth server
   tags: [auth]
-  when: auth_checkout.changed or auth_service.changed or auth_ldap_checkout.changed
+#  when: auth_checkout.changed or auth_service.changed or auth_ldap_checkout.changed
   service: name=auth state=restarted
 
 - name: wait for auth server to become available
