@@ -107,21 +107,27 @@
   copy: src={{custom_ssl_certificates_path|default('sample-certificates')}}/ldap/
         dest=/etc/ldap/ssl
 
+- name: copy ldap config files
+  tags: [ldap]
+  copy: src={{item}}
+        dest=/tmp
+  with_items:
+    - ldap_disable_auth.ldif
+    - ldap_tls_config.ldif
+
 - name: configure ldap server tls 
   tags: [ldap]
   when: ldap_server_tls
   shell: ldapmodify
            -Y EXTERNAL -H ldapi:///
-           -f /vagrant/provisioning/roles/common/files/ldap_tls_config.ldif
-#  failed_when: False
+           -f /tmp/ldap_tls_config.ldif
 
 - name: disable ldap server tls 
   tags: [ldap]
   when: not ldap_server_tls
   shell: ldapmodify
            -Y EXTERNAL -H ldapi:///
-           -f /vagrant/provisioning/roles/common/files/ldap_disable_auth.ldif
-  failed_when: False
+           -f /tmp/ldap_disable_auth.ldif
 
 - name: add openldap user to ssl-cert group
   tags: [ldap]
