@@ -41,7 +41,7 @@ fhir_server_port: 9080
 fhir_server_username: client
 fhir_server_password: secret
 fhir_server_repo: "https://github.com/smart-on-fhir/smart-on-fhir.git"
-fhir_server_branch: "smart-launch"
+fhir_server_branch: "master"
 
 # Specific settings for the SMART-on-FHIR server authorization behavior
 fhir_server_use_auth: true
@@ -58,7 +58,7 @@ app_server_secure_http: false
 app_server_host: "localhost"
 app_server_port: 9090
 app_server_repo: "https://github.com/smart-on-fhir/fhir-starter.git"
-app_server_branch: "smart-launch"
+app_server_branch: "gh-pages"
 
 # General settings for the authorization server
 auth_server_secure_http: false
