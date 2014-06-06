@@ -20,7 +20,7 @@
 - name: load sample patients
   tags: [patients, load_patients]
   when: 
-    sof_checkout.changed or sample_patients_checkout.changed
+    ((sof_checkout.changed or sample_patients_checkout.changed) or always_rebuild)
     and (not fhir_server_preserve_db)
   shell: "chdir={{install_dir}}/smart_sample_patients/generated-data/
          curl

@@ -77,7 +77,7 @@
 - name: copy custom ssl certificates
   tags: [general]
   when: (auth_server_secure_http or fhir_server_secure_http or app_server_secure_http) and use_custom_ssl_certificates
-  copy: src={{custom_ssl_certificates_path|default('sample-certificates')}}/
+  copy: src={{custom_ssl_certificates_path|default('examples/certificates')}}/
         dest=/etc/nginx/ssl
         
 - name: clear truststore
@@ -91,6 +91,12 @@
   shell: /bin/echo -e "{{keystore_password}}\n{{keystore_password}}\n\n\n\n\n\n\nyes\n" | keytool
            -genkey -alias foo
            -keystore {{install_dir}}/keystore
+
+- name: request http server restart
+  when: always_rebuild
+  command: echo
+  notify:
+        - restart nginx
  
 - include: ldap.yml
 - include: smart-on-fhir.yml
