@@ -55,12 +55,6 @@
     JAVA_HOME: "{{java_home_dir}}"
   shell: chdir={{install_dir}}/openid-connect-server
        mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true
-
-- name: reset user-context.xml
-  tags: [auth]
-  sudo_user: "{{username}}"
-  shell: chdir={{install_dir}}/ldap-openid-connect-server
-       git checkout -- ldap-server-overlay/src/main/webapp/WEB-INF/user-context.xml
        
 - name: configure auth ldap overlay for no-tls authentication 1 (if needed)
   tags: [auth]
