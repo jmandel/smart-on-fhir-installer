@@ -1,3 +1,6 @@
+This is an example certificate for "localhost" for the
+authorization server. Do not use in production!
+
 -----BEGIN CERTIFICATE-----
 MIIDyzCCArOgAwIBAgIJAImIVLO8R8MYMA0GCSqGSIb3DQEBCwUAMHwxCzAJBgNV
 BAYTAk1BMQ8wDQYDVQQIDAZCb3N0b24xGDAWBgNVBAcMD0V4YW1wbGUgQ29tcGFu

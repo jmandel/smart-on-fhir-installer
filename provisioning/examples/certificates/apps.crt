@@ -1,3 +1,6 @@
+This is an example certificate for "localhost" for the sample
+apps server. Do not use in production!
+
 -----BEGIN CERTIFICATE-----
 MIID/TCCAuWgAwIBAgIJAKZdyuG8bzWwMA0GCSqGSIb3DQEBCwUAMIGUMQswCQYD
 VQQGEwJVUzELMAkGA1UECAwCTUExDzANBgNVBAcMBkJvc3RvbjEdMBsGA1UECgwU

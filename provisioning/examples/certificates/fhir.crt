@@ -1,3 +1,6 @@
+This is an example certificate for "localhost" for the
+smart-on-fhir server. Do not use in production!
+
 -----BEGIN CERTIFICATE-----
 MIID/TCCAuWgAwIBAgIJAO+rd+H8znoXMA0GCSqGSIb3DQEBCwUAMIGUMQswCQYD
 VQQGEwJVUzELMAkGA1UECAwCTUExDzANBgNVBAcMBkJvc3RvbjEdMBsGA1UECgwU
