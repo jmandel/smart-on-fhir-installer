@@ -12,10 +12,6 @@ import sys
 import requests
 import json
 
-print "running the thingy"
-for v in sys.argv:
-    print "GOt arg", v
-
 app_to_load = json.loads(sys.argv[1])
 server = sys.argv[2]
 auth = (sys.argv[3], sys.argv[4])
@@ -35,7 +31,6 @@ if client_id in apps_loaded:
             headers={'Content-type': 'application/json'},
             verify=False)
     assert (put_req.status_code in (200, 201))
-    print "Put it"
 else:
     post_req = requests.request('POST',
             server+'/api/clients',
@@ -44,5 +39,3 @@ else:
             headers={'Content-type': 'application/json'},
             verify=False)
     assert (post_req.status_code in (200, 201))
-    print "posted it"
-print "finished"
