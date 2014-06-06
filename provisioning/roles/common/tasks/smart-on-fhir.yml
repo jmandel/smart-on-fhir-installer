@@ -6,7 +6,7 @@
 
 - name: restart postgres
   tags: [smart_on_fhir]
-  when: postgres_conf.changed or always_rebuild
+  when: postgres_conf.changed or force_rebuild
   service: name=postgresql state=restarted
 
 - name: create postgres user
@@ -34,7 +34,7 @@
 
 - name: stop smart-on-fhir
   tags: [smart_on_fhir]
-  when: sof_checkout.changed or always_rebuild
+  when: sof_checkout.changed or force_rebuild
   service: name=smart-on-fhir state=stopped
   
 - name: build smart-on-fhir server
@@ -42,25 +42,25 @@
   sudo_user: "{{username}}"
   environment:
     JAVA_HOME: "{{java_home_dir}}"
-  when: sof_checkout.changed or always_rebuild
+  when: sof_checkout.changed or force_rebuild
   shell: chdir={{install_dir}}/smart-on-fhir
         ./grailsw dev war
 
 - name: drop postgres db
   tags: [smart_on_fhir]
   sudo_user: postgres
-  when: (sof_checkout.changed or always_rebuild) and (not fhir_server_preserve_db)
+  when: (sof_checkout.changed or force_rebuild) and (not fhir_server_preserve_db)
   postgresql_db: state=absent name=fhir
           
 - name: create postgres db
   tags: [smart_on_fhir]
   sudo_user: postgres
-  when: sof_checkout.changed or always_rebuild
+  when: sof_checkout.changed or force_rebuild
   postgresql_db: name=fhir owner={{postgres_user}}
 
 - name: restart smart-on-fhir
   tags: [smart_on_fhir]
-  when: (sof_checkout.changed or sof_service.changed) or always_rebuild
+  when: (sof_checkout.changed or sof_service.changed) or force_rebuild
   service: name=smart-on-fhir state=restarted
  
 - name: wait for smart-on-fhir server to become available

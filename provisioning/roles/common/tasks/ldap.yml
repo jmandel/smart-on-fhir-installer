@@ -36,7 +36,7 @@
 
 - name: load sample LDAP directory
   tags: [ldap]
-  when: ldap_checkout.changed or always_rebuild
+  when: ldap_checkout.changed or force_rebuild
   shell: chdir={{install_dir}}
          ldapadd
            -x -D cn=admin,{{ldap_server_base}}

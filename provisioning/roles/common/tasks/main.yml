@@ -93,7 +93,7 @@
            -keystore {{install_dir}}/keystore
 
 - name: request http server restart
-  when: always_rebuild
+  when: force_rebuild
   command: echo
   notify:
         - restart nginx

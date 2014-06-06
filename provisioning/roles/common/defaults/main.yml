@@ -14,7 +14,7 @@ install_dir: "/home/{{username}}"
 
 # Suppresses selective task execution (set this to true if you would like to
 # force the playbook to always rebuild the servers and reload them)
-always_rebuild: false
+force_rebuild: false
 
 # Settigs for Jetty and Oracle Java. You probably won't have to alter these
 # unles you are switching to a different version of Jetty or Java
