@@ -1,6 +1,7 @@
 ---
-username: fhir
-userpass: secretpass
+keystore_password: "changeme"
+username: "fhir"
+userpass: "secretpass"
 auth_server_host: "localhost"
 fhir_server_host: "localhost"
 app_server_host: "localhost"
